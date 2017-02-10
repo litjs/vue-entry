@@ -21,6 +21,10 @@ var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -93,7 +97,7 @@ function translateEs6to5(file) {
  * @param filePath 绝对文件路径
  */
 function relativePath(filePath) {
-  return gPath.relative(__dirname + '/../tempfile', filePath);
+  return _path2.default.relative(__dirname + '/../tempfile', filePath);
 }
 
 /**
@@ -136,7 +140,7 @@ function templateReplace(template, config) {
  */
 function checkProjectType() {
   var projectType = null;
-  var indexHtml = gPath.resolve(config.src) + '/pages/index.html';
+  var indexHtml = _path2.default.resolve(config.src) + '/pages/index.html';
   if (_fs2.default.existsSync(indexHtml)) {
     projectType = 'singleApp';
   }

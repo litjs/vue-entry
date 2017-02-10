@@ -32,8 +32,6 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _getArg = require('./helpers/getArg');
-
 var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -128,7 +126,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     var routeStatement = generateRouteStatements(appName);
 
     // 框架代码 引用路径
-    var ubaseVuePath = _getArg.production ? '../../ubase-vue' : '../../ubase-vue';
+    var ubaseVuePath = userConfig.production ? '../../ubase-vue' : '../../ubase-vue';
 
     var fileContent = (0, _utils.templateReplace)(appEntryTemplate, {
       ubase_vue: { content: ubaseVuePath, relativePath: false, required: true },

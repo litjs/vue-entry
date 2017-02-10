@@ -2,6 +2,7 @@ import * as babel from 'babel-core'
 import colors from 'colors'
 import _ from 'lodash'
 import fs from 'fs'
+import path from  'path'
 
 colors.setTheme({
   silly: 'rainbow',
@@ -71,7 +72,7 @@ function translateEs6to5(file) {
  * @param filePath 绝对文件路径
  */
 function relativePath(filePath) {
-  return gPath.relative(__dirname + '/../tempfile', filePath)
+  return path.relative(__dirname + '/../tempfile', filePath)
 }
 
 /**
@@ -113,9 +114,9 @@ function templateReplace(template, config) {
 /***
  * 检查项目类型 单app或多app模式
  */
-function checkProjectType() {
+function checkProjectType(src) {
   var projectType = null
-  var indexHtml = gPath.resolve(config.src) + '/pages/index.html'
+  var indexHtml = path.resolve(src) + '/pages/index.html'
   if (fs.existsSync(indexHtml)) {
     projectType = 'singleApp'
   }

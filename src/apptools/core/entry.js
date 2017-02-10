@@ -5,7 +5,6 @@ import chokidar from 'chokidar'
 import debounce from 'debounce'
 import beautify from 'js-beautify'
 import path from  'path'
-import { debug, production, loadappcore } from './helpers/getArg'
 
 import {
   checkFileDuplicate,
@@ -28,9 +27,9 @@ export default (userConfig) => {
   userConfig.langs = userConfig.langs || ['cn']
   let entrys = {}
 
-  projectType = checkProjectType()
+  projectType = checkProjectType(config.src)
 
-  generatorEntryFiles(path, webpack, userConfig, entrys)
+  generatorEntryFiles(path, userConfig, entrys)
 
   let watcher = chokidar.watch([path.resolve(userConfig.src) + '/pages/', path.resolve(userConfig.src) + '/components/'], {
     persistent: true
@@ -42,26 +41,26 @@ export default (userConfig) => {
 
   watcher
     .on('addDir', function () {
-      reGeneratorEntryFiles(path, webpack, userConfig, entrys)
+      reGeneratorEntryFiles(path, userConfig, entrys)
     })
     .on('unlinkDir', function () {
-      reGeneratorEntryFiles(path, webpack, userConfig, entrys)
+      reGeneratorEntryFiles(path, userConfig, entrys)
     })
     .on('unlink', function () {
-      reGeneratorEntryFiles(path, webpack, userConfig, entrys)
+      reGeneratorEntryFiles(path, userConfig, entrys)
     })
     .on('add', function () {
-      reGeneratorEntryFiles(path, webpack, userConfig, entrys)
+      reGeneratorEntryFiles(path, userConfig, entrys)
     })
 
   watcher2.on('change', function () {
-    reGeneratorEntryFiles(path, webpack, userConfig, entrys)
+    reGeneratorEntryFiles(path, userConfig, entrys)
   })
 
   return entrys
 }
 
-function generatorEntryFiles(path, webpack, userConfig, entrys) {
+function generatorEntryFiles(path, userConfig, entrys) {
   // appPathList 工程下所有app的主页面入口文件
   let appPathList = glob.sync(path.resolve(userConfig.src) + '/pages/*')
 
@@ -113,7 +112,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     let routeStatement = generateRouteStatements(appName)
 
     // 框架代码 引用路径
-    let ubaseVuePath = production ? '../../ubase-vue' : '../../ubase-vue'
+    let ubaseVuePath = userConfig.production ? '../../ubase-vue' : '../../ubase-vue'
 
     let fileContent = templateReplace(appEntryTemplate, {
       ubase_vue: {content: ubaseVuePath, relativePath: false, required: true},
