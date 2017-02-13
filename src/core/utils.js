@@ -74,6 +74,10 @@ function setStore(store) {
   gStore = store
 }
 
+function addState(){
+
+}
+
 export {
   getConfig,
   setConfig,

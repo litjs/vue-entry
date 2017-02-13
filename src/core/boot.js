@@ -1,7 +1,8 @@
 import {
   Vue,
   VueRouter,
-  VueResource
+  VueResource,
+  i18n
 } from './lib'
 import {
   preLoadResource,
@@ -15,6 +16,7 @@ import {registerState} from './stateManager'
 
 Vue.use(VueRouter)
 Vue.use(VueResource)
+Vue.use(i18n)
 
 function boot(store, routes) {
   var config = getConfig()
@@ -42,8 +44,6 @@ function boot(store, routes) {
   })
 
   setAppRoot(rootApp)
-
-
 
   preLoadResource(function () {
     rootApp.$mount(document.getElementsByTagName('app')[0])

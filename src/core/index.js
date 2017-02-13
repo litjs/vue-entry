@@ -5,6 +5,7 @@ import {
 
 import {boot} from './boot'
 import {invoke, getData} from './instanceManager'
+import locales from './locales'
 
 import {
   setConfig,
@@ -57,12 +58,9 @@ function initI18n() {
   var langUrl = './' + (getConfig()['LANG'] || 'cn') + '.lang.json'
   return Vue.http.get(langUrl).then((res) => {
     var lang = getConfig()['LANG'] || 'cn'
-    var locales = {}
-    locales[lang] = res.data
-    Vue.use(i18n, {
-      lang: lang,
-      locales: locales
-    })
+    Vue.config.lang = lang
+
+    Vue.locale(lang, res.data)
   })
 }
 

@@ -59,9 +59,15 @@
 
 	var _instanceManager = __webpack_require__(12);
 
+	var _locales = __webpack_require__(14);
+
+	var _locales2 = _interopRequireDefault(_locales);
+
 	var _utils = __webpack_require__(10);
 
 	var _log = __webpack_require__(13);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_lib.Vue.getState = _utils.getState; // get vuex state
 	_lib.Vue.invoke = _instanceManager.invoke; // invoke method in vue component methods options.
@@ -100,12 +106,9 @@
 	  var langUrl = './' + ((0, _utils.getConfig)()['LANG'] || 'cn') + '.lang.json';
 	  return _lib.Vue.http.get(langUrl).then(function (res) {
 	    var lang = (0, _utils.getConfig)()['LANG'] || 'cn';
-	    var locales = {};
-	    locales[lang] = res.data;
-	    _lib.Vue.use(_lib.i18n, {
-	      lang: lang,
-	      locales: locales
-	    });
+	    _lib.Vue.config.lang = lang;
+
+	    _lib.Vue.locale(lang, res.data);
 	  });
 	}
 
@@ -13825,6 +13828,7 @@
 
 	_lib.Vue.use(_lib.VueRouter);
 	_lib.Vue.use(_lib.VueResource);
+	_lib.Vue.use(_lib.i18n);
 
 	function boot(store, routes) {
 	  var config = (0, _utils.getConfig)();
@@ -13947,6 +13951,8 @@
 	function setStore(store) {
 	  gStore = store;
 	}
+
+	function addState() {}
 
 	exports.getConfig = getConfig;
 	exports.setConfig = setConfig;
@@ -14158,6 +14164,31 @@
 	exports.error = error;
 	exports.setConfig = setConfig;
 	exports.initLog = initLog;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (i18n) {
+	  var cn = {};
+	  var en = {};
+	  Object.keys(i18n).forEach(function (item) {
+	    var cnObj = {};
+	    var enObj = {};
+	    cnObj[item] = i18n[item]['default']['cn'];
+	    enObj[item] = i18n[item]['default']['en'];
+	    $.extend(cn, cnObj);
+	    $.extend(en, enObj);
+	  });
+
+	  return { cn: cn, en: en };
+	};
 
 /***/ }
 /******/ ]);

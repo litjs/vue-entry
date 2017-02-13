@@ -69,3 +69,9 @@ module.exports = {
     ```
 
 ### extra tools for app development
+
+1. stand alone config file
+    
+2. stand alone i18n file
+    
+    
