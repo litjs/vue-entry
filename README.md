@@ -28,6 +28,7 @@ module.exports = {
 
 ### Application architecture
 1. single app in one project
+
     ```
     src/
     ├── components/
@@ -46,6 +47,7 @@ module.exports = {
         └── ...
     ```
 2. multi app in one project
+
     ```
     src/
     ├── components/
