@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.error = exports.checkProjectType = exports.setPath = exports.templateReplace = exports.relativePath = exports.translateEs6to5 = exports.checkFileNameValid = exports.checkFileDuplicate = undefined;
+exports.getEntryFilePath = exports.error = exports.checkProjectType = exports.setPath = exports.templateReplace = exports.relativePath = exports.translateEs6to5 = exports.checkFileNameValid = exports.checkFileDuplicate = undefined;
 
 var _babelCore = require('babel-core');
 
@@ -93,11 +93,11 @@ function translateEs6to5(file) {
 }
 
 /***
- * 获取绝对文件路径相对于tempfile的相对路径
+ * 获取绝对文件路径相对于tempfiles的相对路径
  * @param filePath 绝对文件路径
  */
 function relativePath(filePath) {
-  return _path2.default.relative(__dirname + '/../tempfile', filePath);
+  return _path2.default.relative(__dirname + '/tempfiles', filePath);
 }
 
 /**
@@ -138,9 +138,9 @@ function templateReplace(template, config) {
 /***
  * 检查项目类型 单app或多app模式
  */
-function checkProjectType() {
+function checkProjectType(src) {
   var projectType = null;
-  var indexHtml = _path2.default.resolve(config.src) + '/pages/index.html';
+  var indexHtml = _path2.default.resolve(src) + '/pages/index.html';
   if (_fs2.default.existsSync(indexHtml)) {
     projectType = 'singleApp';
   }
@@ -153,6 +153,10 @@ function error(message) {
   process.exit();
 }
 
+function getEntryFilePath() {
+  return __dirname + '/tempfiles';
+}
+
 exports.checkFileDuplicate = checkFileDuplicate;
 exports.checkFileNameValid = checkFileNameValid;
 exports.translateEs6to5 = translateEs6to5;
@@ -161,3 +165,4 @@ exports.templateReplace = templateReplace;
 exports.setPath = setPath;
 exports.checkProjectType = checkProjectType;
 exports.error = error;
+exports.getEntryFilePath = getEntryFilePath;

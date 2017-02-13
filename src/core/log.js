@@ -10,15 +10,15 @@ function setConfig(config) {
 
 function debug(string, sys) {
   if (gConfig['DEBUG']) {
-    console && console.debug(`[${sys ? 'SYS DEBUG' : 'DEV DEBUG'}] ${new Date().toISOString()} ${(this&&this.$options&&this.$options._ubase_component_name)?'['+this.$options._ubase_component_name+']':''} ${string}`)
+    console && console.debug(`[${sys ? 'SYS DEBUG' : 'DEV DEBUG'}] ${new Date().toISOString()} ${(this&&this.$options&&this.$options._vue_component_name)?'['+this.$options._vue_component_name+']':''} ${string}`)
   }
 }
 
 function error(string, sys) {
-  console && console.debug(`%c [${sys ? 'SYS ERROR' : 'DEV ERROR'}] ${new Date().toISOString()} [${(this&&this.$options&&this.$options._ubase_component_name)?'['+this.$options._ubase_component_name+']':''} ${string}`, 'color:red')
+  console && console.debug(`%c [${sys ? 'SYS ERROR' : 'DEV ERROR'}] ${new Date().toISOString()} [${(this&&this.$options&&this.$options._vue_component_name)?'['+this.$options._vue_component_name+']':''} ${string}`, 'color:red')
 }
 
-// Vue AJAX log 需要执行完Vue.use(VueResource)后才能初始化
+// Vue AJAX debug log
 function initVueAjaxLog() {
   Vue.http.interceptors.push(function (request, next) {
     debug(`[begin ajax] url: ${request.url}  request:\n ${JSON.stringify(request.body, null, 2)}`, true)
@@ -36,7 +36,7 @@ Vue.mixin({
       return
     }
     var states = Object.keys(computed)
-    var currentComponentName = this.$options._ubase_component_name
+    var currentComponentName = this.$options._vue_component_name
 
     if (currentComponentName && states.length > 0) {
       var statesStringArray = []
@@ -60,7 +60,7 @@ Vue.mixin({
       return
     }
     var states = Object.keys(this.$options.computed)
-    var currentComponentName = this.$options._ubase_component_name
+    var currentComponentName = this.$options._vue_component_name
 
     if (currentComponentName && states.length > 0) {
       debug(`[Vue Component Destroy] name: ${currentComponentName}`, true)

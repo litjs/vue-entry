@@ -23,10 +23,10 @@ function preLoadResource(next, routes) {
 }
 
 function getUserConfig(key) {
-  return window.Ubase[key]
+  return window.Vue[key]
 }
 
-// 设置网页标题
+// set page title
 function setTitle() {
   window.document.getElementsByTagName('title').innerTHML = gConfig['APP_NAME']
 }

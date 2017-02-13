@@ -68,11 +68,11 @@ function translateEs6to5(file) {
 }
 
 /***
- * 获取绝对文件路径相对于tempfile的相对路径
+ * 获取绝对文件路径相对于tempfiles的相对路径
  * @param filePath 绝对文件路径
  */
 function relativePath(filePath) {
-  return path.relative(__dirname + '/../tempfile', filePath)
+  return path.relative(__dirname + '/tempfiles', filePath)
 }
 
 /**
@@ -129,6 +129,10 @@ function error(message) {
   process.exit()
 }
 
+function getEntryFilePath(){
+  return __dirname + '/tempfiles'
+}
+
 export {
   checkFileDuplicate,
   checkFileNameValid,
@@ -137,5 +141,6 @@ export {
   templateReplace,
   setPath,
   checkProjectType,
-  error
+  error,
+  getEntryFilePath
 }

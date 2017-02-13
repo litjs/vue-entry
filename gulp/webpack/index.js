@@ -27,7 +27,7 @@ export default {
   output: {
     // path: path.resolve(config.dest + config.scripts),
     publicPath: config.isDevelope ? 'http://localhost:' + config.server.port + '/' : '',
-    filename: './ubase-vue.js',
+    filename: './vue-entry.js',
   },
 
   watch: config.isDevelope,
@@ -38,8 +38,6 @@ export default {
 
   // http://habrahabr.ru/post/245991/
   plugins: plugins,
-
-  noParse: [/\/node_modules\/(vue|framework7|moment)/i],
 
   postcss: () => [
     autoprefixer({

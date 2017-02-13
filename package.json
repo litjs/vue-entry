@@ -2,7 +2,7 @@
   "name": "vue-entry",
   "version": "0.0.2",
   "description": "",
-  "main": "dist/apptools/core/entry.js",
+  "main": "dist/bootstrap/index.js",
   "scripts": {
     "test": "mocha test/test.js --slow 1000 --compilers js:babel-core/register"
   },

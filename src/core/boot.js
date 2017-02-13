@@ -1,10 +1,8 @@
 import {
   Vue,
   VueRouter,
-  VueResource,
-  Vuex
+  VueResource
 } from './lib'
-import app from './app'
 import {
   preLoadResource,
   setRouter,
@@ -13,9 +11,10 @@ import {
   setStore
 } from './utils'
 
+import {registerState} from './stateManager'
+
 Vue.use(VueRouter)
 Vue.use(VueResource)
-Vue.use(Vuex)
 
 function boot(store, routes) {
   var config = getConfig()
@@ -27,7 +26,12 @@ function boot(store, routes) {
     routes: routes
   })
   setRouter(router)
-  setStore(store)
+
+  var modules = store.modules
+
+  Object.keys(modules).forEach((module) =>{
+    registerState(module, modules[module].state)
+  })
 
   var rootApp = new Vue({
     router,
@@ -35,12 +39,11 @@ function boot(store, routes) {
     data: () => ({
       config: config
     }),
-    store
   })
 
   setAppRoot(rootApp)
 
-  store = new Vuex.Store(store)
+
 
   preLoadResource(function () {
     rootApp.$mount(document.getElementsByTagName('app')[0])

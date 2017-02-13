@@ -1,6 +1,6 @@
 'use strict';
 
-require('{{ubase_vue}}');
+require('{{vue_entry}}');
 
 // 等app定制文件加载完成后进行初始化
 window.onload = function () {
@@ -19,16 +19,12 @@ window.onload = function () {
                   '{{stateImportStatements}}';
                   '{{vueComponentImportStatements}}';
 
-                  var STORE = {
-                        modules: {}
-                  };
-
                   '{{stateSetValueStatements}}';
 
                   // 全局注册src/components及app下的vue组件
                   '{{vueComponentSetValueStatements}}';
 
-                  window._UBASE_PRIVATE.startApp(null, STORE, routes);
+                  window._PRIVATE__.startApp(null, STORE, routes);
             });
       });
 };

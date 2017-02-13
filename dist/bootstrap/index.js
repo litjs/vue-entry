@@ -46,9 +46,9 @@ exports.default = function (userConfig) {
   userConfig.langs = userConfig.langs || ['cn'];
   var entrys = {};
 
-  projectType = (0, _utils.checkProjectType)();
+  projectType = (0, _utils.checkProjectType)(userConfig.src);
 
-  generatorEntryFiles(_path2.default, webpack, userConfig, entrys);
+  generatorEntryFiles(_path2.default, userConfig, entrys);
 
   var watcher = _chokidar2.default.watch([_path2.default.resolve(userConfig.src) + '/pages/', _path2.default.resolve(userConfig.src) + '/components/'], {
     persistent: true
@@ -59,28 +59,28 @@ exports.default = function (userConfig) {
   });
 
   watcher.on('addDir', function () {
-    reGeneratorEntryFiles(_path2.default, webpack, userConfig, entrys);
+    reGeneratorEntryFiles(_path2.default, userConfig, entrys);
   }).on('unlinkDir', function () {
-    reGeneratorEntryFiles(_path2.default, webpack, userConfig, entrys);
+    reGeneratorEntryFiles(_path2.default, userConfig, entrys);
   }).on('unlink', function () {
-    reGeneratorEntryFiles(_path2.default, webpack, userConfig, entrys);
+    reGeneratorEntryFiles(_path2.default, userConfig, entrys);
   }).on('add', function () {
-    reGeneratorEntryFiles(_path2.default, webpack, userConfig, entrys);
+    reGeneratorEntryFiles(_path2.default, userConfig, entrys);
   });
 
   watcher2.on('change', function () {
-    reGeneratorEntryFiles(_path2.default, webpack, userConfig, entrys);
+    reGeneratorEntryFiles(_path2.default, userConfig, entrys);
   });
 
   return entrys;
 };
 
-function generatorEntryFiles(path, webpack, userConfig, entrys) {
+function generatorEntryFiles(path, userConfig, entrys) {
   // appPathList 工程下所有app的主页面入口文件
   var appPathList = _glob2.default.sync(path.resolve(userConfig.src) + '/pages/*');
 
   // app入口文件模板
-  var appEntryTemplate = _fs2.default.readFileSync(__dirname + '/../appindex/index.js', 'utf8');
+  var appEntryTemplate = _fs2.default.readFileSync(__dirname + '/entryTemplate.js', 'utf8');
 
   if (projectType === 'singleApp') {
     appPathList = ['.'];
@@ -97,7 +97,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     var appName = appPath.replace(/.*\/pages\/([^\/]*)$/, '$1');
 
     // 在tempfile下创建每个应用单独的文件夹 用于存储应用的私有文件（如国际化文件等）
-    var tempAppPath = __dirname + '/../tempfile/' + appName + '/';
+    var tempAppPath = __dirname + '/tempfiles/' + appName + '/';
     if (!_fs2.default.existsSync(tempAppPath)) {
       _fs2.default.mkdirSync(tempAppPath);
     }
@@ -126,10 +126,10 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     var routeStatement = generateRouteStatements(appName);
 
     // 框架代码 引用路径
-    var ubaseVuePath = userConfig.production ? '../../ubase-vue' : '../../ubase-vue';
+    var vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry';
 
     var fileContent = (0, _utils.templateReplace)(appEntryTemplate, {
-      ubase_vue: { content: ubaseVuePath, relativePath: false, required: true },
+      vue_entry: { content: vueEntryPath, relativePath: false, required: true },
 
       stateImportStatements: { content: stateStatements.import, statement: true },
       stateSetValueStatements: { content: stateStatements.setValue, statement: true },
@@ -147,7 +147,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
       indexHtml: { content: indexHtmlFilePath, relativePath: true, required: true }
     });
 
-    var entryFilePath = __dirname + '/../tempfile/' + appName + '.js';
+    var entryFilePath = __dirname + '/tempfiles/' + appName + '.js';
 
     // 判断入口文件是否已经存在， 如果存在切内容已过期 则重新写入（此时是为了防止对已经存在且内容未过期的入口文件重复写入触发webpack重新编译）
     if (tempFileContents[entryFilePath] != fileContent) {
@@ -185,7 +185,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
   function generateStateStatements(fileList) {
     var uniqueIndex = 0;
     var importTpl = [];
-    var setValueTpl = [];
+    var setValueTpl = ['const STORE = {modules: {}};'];
     fileList.forEach(function (stateFile) {
       var filename = '';
 
@@ -218,7 +218,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
 
     if (_fs2.default.existsSync(configFilePath)) {
       configStatements.require = 'require("' + (0, _utils.relativePath)(configFilePath) + '")';
-      configStatements.init = 'window._UBASE_PRIVATE.init()';
+      configStatements.init = 'window._PRIVATE__.initConfig()';
     } else {
       configStatements.init = 'Promise.resolve()';
     }
@@ -249,7 +249,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     });
 
     i18nStatements.require = importI18nArray.join('\n');
-    i18nStatements.init = 'window._UBASE_PRIVATE.initI18n()';
+    i18nStatements.init = 'window._PRIVATE__.initI18n()';
 
     return i18nStatements;
   }
@@ -293,7 +293,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
     if (singleApp) {
       userConfig.langs.forEach(function (item) {
         var fileContent = _jsBeautify2.default.js_beautify(JSON.stringify(i18nContainer[item] || ''), { indent_size: 2 });
-        var filePath = __dirname + '/../tempfile/' + item + '.lang.json';
+        var filePath = __dirname + '/tempfiles/' + item + '.lang.json';
         if (tempFileContents[filePath] != fileContent) {
           _fs2.default.writeFileSync(filePath, fileContent);
           tempFileContents[filePath] = fileContent;
@@ -301,7 +301,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
       });
     } else {
       Object.keys(i18nContainer).forEach(function (appName) {
-        var appPath = __dirname + '/../tempfile/' + appName + '/';
+        var appPath = __dirname + '/tempfiles/' + appName + '/';
         userConfig.langs.forEach(function (item) {
           var fileContent = _jsBeautify2.default.js_beautify(JSON.stringify(i18nContainer[appName][item] || ''), { indent_size: 2 });
           var filePath = appPath + item + '.lang.json';
@@ -337,7 +337,7 @@ function generatorEntryFiles(path, webpack, userConfig, entrys) {
       var uid = uniqueIndex++;
       var vueComponentName = filename + 'Component' + uid;
       importTpl.push('var ' + vueComponentName + ' = require("' + (0, _utils.relativePath)(vueFile) + '");');
-      importTpl.push(vueComponentName + '._ubase_component_name = \'' + filename + '\';');
+      importTpl.push(vueComponentName + '._vue_component_name = \'' + filename + '\';');
       setValueTpl.push('Vue.component(' + vueComponentName + '.name || "' + filename + '", ' + vueComponentName + ');');
     });
 
