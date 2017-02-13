@@ -1,4 +1,4 @@
-# vue-entry
+# vue-entry [![Build Status](https://img.shields.io/circleci/project/litjs/vue-entry/master.svg)](https://circleci.com/gh/litjs/vue-entry) [![npm package](https://img.shields.io/npm/v/vue-entry.svg)](https://www.npmjs.com/package/vue-entry)
 An entry boot for Vue.js projects.
 
 ### Installation
@@ -26,44 +26,44 @@ module.exports = {
 }
 ```
 
-### application architecture
+### Application architecture
 1. single app in one project
-```
-src/
-├── components/
-├── pages/
-│   ├── page1
-│   │   ├── page1.i18n.js // i18n file optional 
-│   │   ├── pag1.vue // page file *required
-│   │   └──page1.state.js // state file optional 
-│   ├── index.html  // *required
-│   ├── routes.js  // optional
-│   ├── config.json  // optional 
-│   ├── service.js  // optional 
-│   └── ...
-└── statics/
-    ├── images/
-    └── ...
-```
+    ```
+    src/
+    ├── components/
+    ├── pages/
+    │   ├── page1
+    │   │   ├── page1.i18n.js // i18n file optional 
+    │   │   ├── pag1.vue // page file *required
+    │   │   └──page1.state.js // state file optional 
+    │   ├── index.html  // *required
+    │   ├── routes.js  // optional
+    │   ├── config.json  // optional 
+    │   ├── service.js  // optional 
+    │   └── ...
+    └── statics/
+        ├── images/
+        └── ...
+    ```
 2. multi app in one project
-```
-src/
-├── components/
-├── pages/
-│   ├── app1
-│   │   ├── index.html
-│   │   ├── routes.js
-│   │   ├── config.json
-│   │   └── ...
-│   ├── app2
-│   │    ├── index.html
-│   │    ├── routes.js
-│   │    ├── config.json
-│   │    └── ...
-│   └── ...
-└── statics/
-    ├── images/
-    └── ...
-```
+    ```
+    src/
+    ├── components/
+    ├── pages/
+    │   ├── app1
+    │   │   ├── index.html
+    │   │   ├── routes.js
+    │   │   ├── config.json
+    │   │   └── ...
+    │   ├── app2
+    │   │    ├── index.html
+    │   │    ├── routes.js
+    │   │    ├── config.json
+    │   │    └── ...
+    │   └── ...
+    └── statics/
+        ├── images/
+        └── ...
+    ```
 
 ### extra tools for app development
