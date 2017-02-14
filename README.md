@@ -23,6 +23,7 @@ module.exports = {
 {
   "src": './src', // An relative path for the source. Default: './src'. normally  include pages and components folders in it.
   "autoImportVueComponent": true, // vue component import and registered to Vue globally.
+  "vueLibBuildIn":true, // vue.js, vue-router.js, vue-resource.js, vue-i18n.js is required in vue-entry. not need required by developer manually. 
 }
 ```
 
