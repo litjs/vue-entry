@@ -32,8 +32,15 @@ function setTitle() {
 }
 
 function getFixedMainLayout() {
-  var layout = '<header></header><main><app></app></main><footer></footer>'
-  window.document.body.innerHTML = layout
+  var header = document.createElement('header')
+  var main = document.createElement('main')
+  var footer = document.createElement('footer')
+
+  main.innerHTML = '<app></app>'
+
+  window.document.body.prepend(footer)
+  window.document.body.prepend(main)
+  window.document.body.prepend(header)
 }
 
 function getState(vuexName) {
