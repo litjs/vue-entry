@@ -100,6 +100,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
     let indexHtmlFilePath = path.resolve(userConfig.src) + `/pages/${appName}/index.html`
     let configFilePath = path.resolve(userConfig.src) + `/pages/${appName}/config.json`
 
+    let vueLibStatements = generateVueLibStatements()
+
     // 解析state文件路径 生成对应的state初始化语句
     let stateStatements = generateStateStatements(appStateFilesPath)
 
@@ -115,6 +117,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
     let vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry'
 
     let fileContent = templateReplace(appEntryTemplate, {
+      vue_lib: {content: vueLibStatements, statement: true},
       vue_entry: {content: vueEntryPath, relativePath: false, required: true},
 
       stateImportStatements: {content: stateStatements.import, statement: true},
@@ -205,7 +208,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
     if (fs.existsSync(configFilePath)) {
       configStatements.require = 'require("' + relativePath(configFilePath) + '")'
       configStatements.init = 'window._PRIVATE__.initConfig()'
-    }else{
+    } else {
       configStatements.init = 'Promise.resolve()'
     }
 
@@ -331,6 +334,15 @@ function generatorEntryFiles(path, userConfig, entrys) {
     vueStatements.setValue = setValueTpl.join('\n')
 
     return vueStatements
+  }
+
+  function generateVueLibStatements() {
+    var vueLib = `window.Vue = require('vue/dist/vue.min')
+window.VueI18n = require('vue-i18n/dist/vue-i18n.min')
+window.VueRouter  = require('vue-router/dist/vue-router.min')
+window.VueResource  = require('vue-resource/dist/vue-resource.min')`
+
+    return userConfig.vueLibBuildIn === false ? '' : vueLib
   }
 
   return entrys

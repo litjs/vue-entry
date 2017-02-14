@@ -1,7 +1,7 @@
-import Vue from '../../node_modules/vue/dist/vue'
-import i18n from 'vue-i18n'
-import VueRouter from 'vue-router'
-import VueResource from 'vue-resource'
+let Vue = window.Vue
+let i18n = window.VueI18n
+let VueRouter = window.VueRouter
+let VueResource = window.VueResource
 
 export {
   Vue,

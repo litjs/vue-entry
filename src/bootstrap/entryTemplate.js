@@ -1,3 +1,4 @@
+'{{vue_lib}}'
 require('{{vue_entry}}')
 
 // 等app定制文件加载完成后进行初始化

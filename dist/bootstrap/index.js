@@ -114,6 +114,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
     var indexHtmlFilePath = path.resolve(userConfig.src) + ('/pages/' + appName + '/index.html');
     var configFilePath = path.resolve(userConfig.src) + ('/pages/' + appName + '/config.json');
 
+    var vueLibStatements = generateVueLibStatements();
+
     // 解析state文件路径 生成对应的state初始化语句
     var stateStatements = generateStateStatements(appStateFilesPath);
 
@@ -129,6 +131,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
     var vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry';
 
     var fileContent = (0, _utils.templateReplace)(appEntryTemplate, {
+      vue_lib: { content: vueLibStatements, statement: true },
       vue_entry: { content: vueEntryPath, relativePath: false, required: true },
 
       stateImportStatements: { content: stateStatements.import, statement: true },
@@ -345,6 +348,12 @@ function generatorEntryFiles(path, userConfig, entrys) {
     vueStatements.setValue = setValueTpl.join('\n');
 
     return vueStatements;
+  }
+
+  function generateVueLibStatements() {
+    var vueLib = 'window.Vue = require(\'vue/dist/vue.min\')\nwindow.VueI18n = require(\'vue-i18n/dist/vue-i18n.min\')\nwindow.VueRouter  = require(\'vue-router/dist/vue-router.min\')\nwindow.VueResource  = require(\'vue-resource/dist/vue-resource.min\')';
+
+    return userConfig.vueLibBuildIn === false ? '' : vueLib;
   }
 
   return entrys;
