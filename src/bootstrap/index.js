@@ -337,7 +337,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
   }
 
   function generateVueLibStatements() {
-    var vueLib = `window.Vue = require('vue/dist/vue.min')
+    var vueLib = `window.Vue = require('vue/dist/vue.common')
 window.VueI18n = require('vue-i18n/dist/vue-i18n.min')
 window.VueRouter  = require('vue-router/dist/vue-router.min')
 window.VueResource  = require('vue-resource/dist/vue-resource.min')`
