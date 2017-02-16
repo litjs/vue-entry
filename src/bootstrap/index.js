@@ -34,7 +34,7 @@ export default (userConfig) => {
   srcFolder = userConfig.srcFolder
   componentsFolder = userConfig.componentsFolder
 
-  userConfig.langs = userConfig.langs || ['cn']
+  userConfig.langs = userConfig.langs || ['zh_CN']
 
   singleApp = isSingleAppMode(srcFolder)
 

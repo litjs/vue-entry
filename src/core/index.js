@@ -57,7 +57,7 @@ function initConfig() {
 function initI18n() {
   var langUrl = './' + (getConfig()['LANG'] || 'cn') + '.lang.json'
   return Vue.http.get(langUrl).then((res) => {
-    var lang = getConfig()['LANG'] || 'cn'
+    var lang = getConfig()['LANG'] || getConfig()['lang'] || 'cn'
     Vue.config.lang = lang
 
     Vue.locale(lang, res.data)

@@ -105,7 +105,7 @@
 	function initI18n() {
 	  var langUrl = './' + ((0, _utils.getConfig)()['LANG'] || 'cn') + '.lang.json';
 	  return _lib.Vue.http.get(langUrl).then(function (res) {
-	    var lang = (0, _utils.getConfig)()['LANG'] || 'cn';
+	    var lang = (0, _utils.getConfig)()['LANG'] || (0, _utils.getConfig)()['lang'] || 'cn';
 	    _lib.Vue.config.lang = lang;
 
 	    _lib.Vue.locale(lang, res.data);
