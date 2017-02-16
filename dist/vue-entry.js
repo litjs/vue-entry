@@ -245,9 +245,9 @@
 
 	  main.innerHTML = '<app></app>';
 
-	  window.document.body.prepend(footer);
-	  window.document.body.prepend(main);
-	  window.document.body.prepend(header);
+	  window.document.body.appendChild(header);
+	  window.document.body.appendChild(main);
+	  window.document.body.appendChild(footer);
 	}
 
 	function getState(vuexName) {

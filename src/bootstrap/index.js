@@ -12,30 +12,39 @@ import {
   translateEs6to5,
   relativePath,
   templateReplace,
-  setPath,
-  checkProjectType,
-  error
+  isSingleAppMode,
+  error,
+  initConfig,
+  getConfig
 } from './utils'
 
-var projectType = null
 var tempFileContents = {
   entryFiles: {}
 }
 
+let singleApp = null
+var srcFolder = ''
+let componentsFolder = ''
+
 export default (userConfig) => {
-  setPath(path)
-  userConfig.langs = userConfig.langs || ['cn']
+  initConfig(userConfig)
+  userConfig = getConfig(userConfig)
   let entrys = {}
 
-  projectType = checkProjectType(userConfig.src)
+  srcFolder = userConfig.srcFolder
+  componentsFolder = userConfig.componentsFolder
+
+  userConfig.langs = userConfig.langs || ['cn']
+
+  singleApp = isSingleAppMode(srcFolder)
 
   generatorEntryFiles(path, userConfig, entrys)
 
-  let watcher = chokidar.watch([path.resolve(userConfig.src) + '/pages/', path.resolve(userConfig.src) + '/components/'], {
+  let watcher = chokidar.watch([path.resolve(srcFolder)], {
     persistent: true
   });
 
-  let watcher2 = chokidar.watch([path.resolve(userConfig.src) + '/pages/**/*.i18n.js'], {
+  let watcher2 = chokidar.watch([path.resolve(srcFolder) + '/**/*.i18n.js'], {
     persistent: true
   });
 
@@ -62,14 +71,16 @@ export default (userConfig) => {
 
 function generatorEntryFiles(path, userConfig, entrys) {
   // appPathList 工程下所有app的主页面入口文件
-  let appPathList = glob.sync(path.resolve(userConfig.src) + '/pages/*')
+  let appPathList = null
+
+  if (singleApp) {
+    appPathList = ['.']
+  } else {
+    appPathList = glob.sync(path.resolve(srcFolder) + '/apps/*')
+  }
 
   // app入口文件模板
   let appEntryTemplate = fs.readFileSync(__dirname + '/entryTemplate.js', 'utf8')
-
-  if (projectType === 'singleApp') {
-    appPathList = ['.']
-  }
 
   appPathList.forEach(function (appPath) {
     let stat = fs.lstatSync(appPath)
@@ -79,7 +90,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
       return
     }
 
-    let appName = appPath.replace(/.*\/pages\/([^\/]*)$/, '$1')
+    let appName = appPath.replace(/.*\/apps\/([^\/]*)$/, '$1')
 
     // 在tempfile下创建每个应用单独的文件夹 用于存储应用的私有文件（如国际化文件等）
     let tempAppPath = __dirname + '/tempfiles/' + appName + '/'
@@ -87,18 +98,27 @@ function generatorEntryFiles(path, userConfig, entrys) {
       fs.mkdirSync(tempAppPath)
     }
 
+    var appRelativePath = singleApp ? '/.' : ('/apps/' + appName)
+
     // 获取app下所有state文件路径列表
-    let appStateFilesPath = glob.sync(path.resolve(userConfig.src) + `/pages/${appName}/**/*.vuex.js`).concat(glob.sync(path.resolve(userConfig.src) + '/*.vuex.js'))
-      .concat(glob.sync(path.resolve(userConfig.src) + `/pages/${appName}/**/*.state.js`)).concat(glob.sync(path.resolve(userConfig.src) + '/*.state.js'))
+    let appStateFilesPath = glob.sync(path.resolve(srcFolder) + `${appRelativePath}/**/*.vuex.js`)
+      .concat(glob.sync(path.resolve(srcFolder) + `${appRelativePath}/**/*.state.js`))
 
     // 获取app下的vue组件及components下的组件
-    let appVueFilesPath = glob.sync(path.resolve(userConfig.src) + `/pages/${appName}/**/*.vue`).concat(glob.sync(path.resolve(userConfig.src) + '/components/**/*.vue'))
+    let appVueFilesPath = glob.sync(path.resolve(srcFolder) + `${appRelativePath}/**/*.vue`)
 
     // 获取app下的使用的国际化文件路径列表
-    let appI18nFilesPath = glob.sync(path.resolve(userConfig.src) + `/pages/${appName}/**/*.i18n.js`).concat(glob.sync(path.resolve(userConfig.src) + '/*.i18n.js'))
+    let appI18nFilesPath = glob.sync(path.resolve(srcFolder) + `${appRelativePath}/**/*.i18n.js`)
 
-    let indexHtmlFilePath = path.resolve(userConfig.src) + `/pages/${appName}/index.html`
-    let configFilePath = path.resolve(userConfig.src) + `/pages/${appName}/config.json`
+    let indexHtmlFilePath = path.resolve(srcFolder) + `${appRelativePath}/index.html`
+    let configFilePath = path.resolve(srcFolder) + `${appRelativePath}/config.json`
+
+    // 多app模式时， components文件夹和全局国际化文件共享
+    if(!singleApp){
+      appVueFilesPath = appVueFilesPath.concat(glob.sync(path.resolve(componentsFolder) + '/**/*.vue'))
+      appI18nFilesPath = appI18nFilesPath.concat(glob.sync(path.resolve(srcFolder) + '/*.i18n.js'))
+    }
+
 
     let vueLibStatements = generateVueLibStatements()
 
@@ -149,12 +169,13 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
   function generateRouteStatements(appName) {
     var routeStatement = ''
-    var routesjs = path.resolve(userConfig.src) + `/pages/${appName}/routes.js`
-    var indexVue = path.resolve(userConfig.src) + `/pages/${appName}/index.vue`
-    var indexVueFolder = path.resolve(userConfig.src) + `/pages/${appName}/index/index.vue`
+    var appRelativePath = singleApp ? '/.' : ('/apps/' + appName)
+    var routesJs = path.resolve(srcFolder) + `${appRelativePath}/routes.js`
+    var indexVue = path.resolve(srcFolder) + `${appRelativePath}/index.vue`
+    var indexVueFolder = path.resolve(srcFolder) + `${appRelativePath}/index/index.vue`
 
-    if (fs.existsSync(routesjs)) {
-      routeStatement = `var routes = require('${relativePath(routesjs)}').default`
+    if (fs.existsSync(routesJs)) {
+      routeStatement = `var routes = require('${relativePath(routesJs)}').default`
     } else if (fs.existsSync(indexVue)) {
       routeStatement = `var routes = [{path:'/', component: require('${relativePath(indexVue)}')}]`
     } else if (fs.existsSync(indexVueFolder)) {
@@ -250,7 +271,6 @@ function generatorEntryFiles(path, userConfig, entrys) {
    */
   function generateI18nFile(fileList, appName) {
     let uniqueIndex = 0
-    var singleApp = projectType === 'singleApp'
     var i18nContainer = {}
 
     if (fileList.length === 0) {

@@ -23,7 +23,7 @@ module.exports = {
 {
   "src": './src', // An relative path for the source. Default: './src'. normally  include pages and components folders in it.
   "autoImportVueComponent": true, // vue component import and registered to Vue globally.
-  "vueLibBuildIn":true, // vue.js, vue-router.js, vue-resource.js, vue-i18n.js is required in vue-entry. not need required by developer manually. 
+  "vueLibBuildIn":true, // include vue.js, vue-router.js, vue-resource.js, vue-i18n.js. if setting false, using script tag for global use manually. 
 }
 ```
 
@@ -33,16 +33,15 @@ module.exports = {
     ```
     src/
     ├── components/
-    ├── pages/
-    │   ├── page1
-    │   │   ├── page1.i18n.js // i18n file optional 
-    │   │   ├── pag1.vue // page file *required
-    │   │   └──page1.state.js // state file optional 
-    │   ├── index.html  // *required
-    │   ├── routes.js  // optional
-    │   ├── config.json  // optional 
-    │   ├── service.js  // optional 
-    │   └── ...
+    ├── page1/
+    │   ├── page1.i18n.js // i18n file optional 
+    │   ├── pag1.vue // page file *required
+    │   └──page1.state.js // state file optional 
+    ├── index.html  // *required
+    ├── routes.js  // optional
+    ├── config.json  // optional 
+    ├── service.js  // optional 
+    └── ...
     └── statics/
         ├── images/
         └── ...
@@ -52,7 +51,7 @@ module.exports = {
     ```
     src/
     ├── components/
-    ├── pages/
+    ├── apps/
     │   ├── app1
     │   │   ├── index.html
     │   │   ├── routes.js

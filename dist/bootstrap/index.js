@@ -36,25 +36,33 @@ var _utils = require('./utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var projectType = null;
 var tempFileContents = {
   entryFiles: {}
 };
 
+var singleApp = null;
+var srcFolder = '';
+var componentsFolder = '';
+
 exports.default = function (userConfig) {
-  (0, _utils.setPath)(_path2.default);
-  userConfig.langs = userConfig.langs || ['cn'];
+  (0, _utils.initConfig)(userConfig);
+  userConfig = (0, _utils.getConfig)(userConfig);
   var entrys = {};
 
-  projectType = (0, _utils.checkProjectType)(userConfig.src);
+  srcFolder = userConfig.srcFolder;
+  componentsFolder = userConfig.componentsFolder;
+
+  userConfig.langs = userConfig.langs || ['cn'];
+
+  singleApp = (0, _utils.isSingleAppMode)(srcFolder);
 
   generatorEntryFiles(_path2.default, userConfig, entrys);
 
-  var watcher = _chokidar2.default.watch([_path2.default.resolve(userConfig.src) + '/pages/', _path2.default.resolve(userConfig.src) + '/components/'], {
+  var watcher = _chokidar2.default.watch([_path2.default.resolve(srcFolder)], {
     persistent: true
   });
 
-  var watcher2 = _chokidar2.default.watch([_path2.default.resolve(userConfig.src) + '/pages/**/*.i18n.js'], {
+  var watcher2 = _chokidar2.default.watch([_path2.default.resolve(srcFolder) + '/**/*.i18n.js'], {
     persistent: true
   });
 
@@ -77,14 +85,16 @@ exports.default = function (userConfig) {
 
 function generatorEntryFiles(path, userConfig, entrys) {
   // appPathList 工程下所有app的主页面入口文件
-  var appPathList = _glob2.default.sync(path.resolve(userConfig.src) + '/pages/*');
+  var appPathList = null;
+
+  if (singleApp) {
+    appPathList = ['.'];
+  } else {
+    appPathList = _glob2.default.sync(path.resolve(srcFolder) + '/apps/*');
+  }
 
   // app入口文件模板
   var appEntryTemplate = _fs2.default.readFileSync(__dirname + '/entryTemplate.js', 'utf8');
-
-  if (projectType === 'singleApp') {
-    appPathList = ['.'];
-  }
 
   appPathList.forEach(function (appPath) {
     var stat = _fs2.default.lstatSync(appPath);
@@ -94,7 +104,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
       return;
     }
 
-    var appName = appPath.replace(/.*\/pages\/([^\/]*)$/, '$1');
+    var appName = appPath.replace(/.*\/apps\/([^\/]*)$/, '$1');
 
     // 在tempfile下创建每个应用单独的文件夹 用于存储应用的私有文件（如国际化文件等）
     var tempAppPath = __dirname + '/tempfiles/' + appName + '/';
@@ -102,17 +112,25 @@ function generatorEntryFiles(path, userConfig, entrys) {
       _fs2.default.mkdirSync(tempAppPath);
     }
 
+    var appRelativePath = singleApp ? '/.' : '/apps/' + appName;
+
     // 获取app下所有state文件路径列表
-    var appStateFilesPath = _glob2.default.sync(path.resolve(userConfig.src) + ('/pages/' + appName + '/**/*.vuex.js')).concat(_glob2.default.sync(path.resolve(userConfig.src) + '/*.vuex.js')).concat(_glob2.default.sync(path.resolve(userConfig.src) + ('/pages/' + appName + '/**/*.state.js'))).concat(_glob2.default.sync(path.resolve(userConfig.src) + '/*.state.js'));
+    var appStateFilesPath = _glob2.default.sync(path.resolve(srcFolder) + (appRelativePath + '/**/*.vuex.js')).concat(_glob2.default.sync(path.resolve(srcFolder) + (appRelativePath + '/**/*.state.js')));
 
     // 获取app下的vue组件及components下的组件
-    var appVueFilesPath = _glob2.default.sync(path.resolve(userConfig.src) + ('/pages/' + appName + '/**/*.vue')).concat(_glob2.default.sync(path.resolve(userConfig.src) + '/components/**/*.vue'));
+    var appVueFilesPath = _glob2.default.sync(path.resolve(srcFolder) + (appRelativePath + '/**/*.vue'));
 
     // 获取app下的使用的国际化文件路径列表
-    var appI18nFilesPath = _glob2.default.sync(path.resolve(userConfig.src) + ('/pages/' + appName + '/**/*.i18n.js')).concat(_glob2.default.sync(path.resolve(userConfig.src) + '/*.i18n.js'));
+    var appI18nFilesPath = _glob2.default.sync(path.resolve(srcFolder) + (appRelativePath + '/**/*.i18n.js'));
 
-    var indexHtmlFilePath = path.resolve(userConfig.src) + ('/pages/' + appName + '/index.html');
-    var configFilePath = path.resolve(userConfig.src) + ('/pages/' + appName + '/config.json');
+    var indexHtmlFilePath = path.resolve(srcFolder) + (appRelativePath + '/index.html');
+    var configFilePath = path.resolve(srcFolder) + (appRelativePath + '/config.json');
+
+    // 多app模式时， components文件夹和全局国际化文件共享
+    if (!singleApp) {
+      appVueFilesPath = appVueFilesPath.concat(_glob2.default.sync(path.resolve(componentsFolder) + '/**/*.vue'));
+      appI18nFilesPath = appI18nFilesPath.concat(_glob2.default.sync(path.resolve(srcFolder) + '/*.i18n.js'));
+    }
 
     var vueLibStatements = generateVueLibStatements();
 
@@ -163,12 +181,13 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
   function generateRouteStatements(appName) {
     var routeStatement = '';
-    var routesjs = path.resolve(userConfig.src) + ('/pages/' + appName + '/routes.js');
-    var indexVue = path.resolve(userConfig.src) + ('/pages/' + appName + '/index.vue');
-    var indexVueFolder = path.resolve(userConfig.src) + ('/pages/' + appName + '/index/index.vue');
+    var appRelativePath = singleApp ? '/.' : '/apps/' + appName;
+    var routesJs = path.resolve(srcFolder) + (appRelativePath + '/routes.js');
+    var indexVue = path.resolve(srcFolder) + (appRelativePath + '/index.vue');
+    var indexVueFolder = path.resolve(srcFolder) + (appRelativePath + '/index/index.vue');
 
-    if (_fs2.default.existsSync(routesjs)) {
-      routeStatement = 'var routes = require(\'' + (0, _utils.relativePath)(routesjs) + '\').default';
+    if (_fs2.default.existsSync(routesJs)) {
+      routeStatement = 'var routes = require(\'' + (0, _utils.relativePath)(routesJs) + '\').default';
     } else if (_fs2.default.existsSync(indexVue)) {
       routeStatement = 'var routes = [{path:\'/\', component: require(\'' + (0, _utils.relativePath)(indexVue) + '\')}]';
     } else if (_fs2.default.existsSync(indexVueFolder)) {
@@ -264,7 +283,6 @@ function generatorEntryFiles(path, userConfig, entrys) {
    */
   function generateI18nFile(fileList, appName) {
     var uniqueIndex = 0;
-    var singleApp = projectType === 'singleApp';
     var i18nContainer = {};
 
     if (fileList.length === 0) {

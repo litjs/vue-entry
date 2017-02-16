@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getEntryFilePath = exports.error = exports.checkProjectType = exports.setPath = exports.templateReplace = exports.relativePath = exports.translateEs6to5 = exports.checkFileNameValid = exports.checkFileDuplicate = undefined;
+exports.getConfig = exports.initConfig = exports.getAppRootPath = exports.setUserConfig = exports.getEntryFilePath = exports.error = exports.isSingleAppMode = exports.templateReplace = exports.relativePath = exports.translateEs6to5 = exports.checkFileNameValid = exports.checkFileDuplicate = undefined;
 
 var _babelCore = require('babel-core');
 
@@ -42,10 +42,22 @@ _colors2.default.setTheme({
   error: 'red'
 });
 
-var gPath = null;
+var userConfig = {};
 
-function setPath(path) {
-  gPath = path;
+function setUserConfig(conf) {
+  userConfig = conf;
+}
+
+function initConfig(conf) {
+  userConfig = conf;
+
+  userConfig.srcFolder = conf.src || './src';
+  userConfig.componentsFolder = conf.components || conf.src + "/components";
+  userConfig.singleApp = isSingleAppMode(conf.src);
+}
+
+function getConfig() {
+  return userConfig;
 }
 
 /***
@@ -138,14 +150,17 @@ function templateReplace(template, config) {
 /***
  * 检查项目类型 单app或多app模式
  */
-function checkProjectType(src) {
+function isSingleAppMode(config) {
+  if (!userConfig.srcFolder) {
+    initConfig(config);
+  }
   var projectType = null;
-  var indexHtml = _path2.default.resolve(src) + '/pages/index.html';
+  var indexHtml = _path2.default.resolve(userConfig.srcFolder) + '/index.html';
   if (_fs2.default.existsSync(indexHtml)) {
-    projectType = 'singleApp';
+    return true;
   }
 
-  return projectType;
+  return false;
 }
 
 function error(message) {
@@ -153,8 +168,20 @@ function error(message) {
   process.exit();
 }
 
-function getEntryFilePath() {
+function getEntryFilePath(config) {
+  if (!userConfig.srcFolder) {
+    initConfig(config);
+  }
   return __dirname + '/tempfiles';
+}
+
+function getAppRootPath(config) {
+  if (!userConfig.srcFolder) {
+    initConfig(config);
+  }
+  var singleAppMode = isSingleAppMode();
+
+  return singleAppMode ? _path2.default.resolve(userConfig.srcFolder) : _path2.default.resolve(userConfig.srcFolder + '/apps');
 }
 
 exports.checkFileDuplicate = checkFileDuplicate;
@@ -162,7 +189,10 @@ exports.checkFileNameValid = checkFileNameValid;
 exports.translateEs6to5 = translateEs6to5;
 exports.relativePath = relativePath;
 exports.templateReplace = templateReplace;
-exports.setPath = setPath;
-exports.checkProjectType = checkProjectType;
+exports.isSingleAppMode = isSingleAppMode;
 exports.error = error;
 exports.getEntryFilePath = getEntryFilePath;
+exports.setUserConfig = setUserConfig;
+exports.getAppRootPath = getAppRootPath;
+exports.initConfig = initConfig;
+exports.getConfig = getConfig;
