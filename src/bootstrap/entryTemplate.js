@@ -1,5 +1,6 @@
 '{{vue_lib}}'
 require('{{vue_entry}}')
+require('es6-promise').polyfill()
 
 // 等app定制文件加载完成后进行初始化
 window.onload = function () {
