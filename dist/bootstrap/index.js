@@ -145,12 +145,15 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     var routeStatement = generateRouteStatements(appName);
 
+    var pluginStatement = generatePluginStatement();
+
     // 框架代码 引用路径
     var vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry';
 
     var fileContent = (0, _utils.templateReplace)(appEntryTemplate, {
       vue_lib: { content: vueLibStatements, statement: true },
       vue_entry: { content: vueEntryPath, relativePath: false, required: true },
+      plugins: { content: pluginStatement, statement: true },
 
       stateImportStatements: { content: stateStatements.import, statement: true },
       stateSetValueStatements: { content: stateStatements.setValue, statement: true },
@@ -372,6 +375,18 @@ function generatorEntryFiles(path, userConfig, entrys) {
     var vueLib = 'window.Vue = require(\'vue/dist/vue.common\')\nwindow.VueI18n = require(\'vue-i18n/dist/vue-i18n.min\')\nwindow.VueRouter  = require(\'vue-router/dist/vue-router.min\')\nwindow.VueResource  = require(\'vue-resource/dist/vue-resource.min\')';
 
     return userConfig.vueLibBuildIn === false ? '' : vueLib;
+  }
+
+  function generatePluginStatement() {
+    var plugins = userConfig.plugins;
+
+    var importStatement = [];
+
+    _lodash2.default.each(plugins, function (item) {
+      importStatement.push('var plugin_' + item + ' = require(\'vue-entry-plugin-' + item + '\');\n      plugin_' + item + '.exec && plugin_' + item + '.exec(conf);');
+    });
+
+    return importStatement.join('\n');
   }
 
   return entrys;

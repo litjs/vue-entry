@@ -98,6 +98,8 @@
 
 	    (0, _utils.setConfig)(res.data);
 	    (0, _log.setConfig)(res.data);
+
+	    return res.data;
 	  });
 	}
 
