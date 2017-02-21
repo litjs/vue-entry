@@ -50,6 +50,8 @@ function initConfig() {
 
     setConfig(res.data)
     setConfigForLog(res.data)
+
+    return res.data
   })
 }
 

@@ -133,12 +133,15 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     let routeStatement = generateRouteStatements(appName)
 
+    let pluginStatement = generatePluginStatement();
+
     // 框架代码 引用路径
     let vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry'
 
     let fileContent = templateReplace(appEntryTemplate, {
       vue_lib: {content: vueLibStatements, statement: true},
       vue_entry: {content: vueEntryPath, relativePath: false, required: true},
+      plugins: {content: pluginStatement, statement: true},
 
       stateImportStatements: {content: stateStatements.import, statement: true},
       stateSetValueStatements: {content: stateStatements.setValue, statement: true},
@@ -363,6 +366,20 @@ window.VueRouter  = require('vue-router/dist/vue-router.min')
 window.VueResource  = require('vue-resource/dist/vue-resource.min')`
 
     return userConfig.vueLibBuildIn === false ? '' : vueLib
+  }
+
+
+  function generatePluginStatement(){
+    var plugins = userConfig.plugins;
+
+    var importStatement = []
+
+    _.each(plugins, function (item) {
+      importStatement.push(`var plugin_${item} = require('vue-entry-plugin-${item}');
+      plugin_${item}.exec && plugin_${item}.exec(conf);`)
+    })
+
+    return importStatement.join('\n')
   }
 
   return entrys
