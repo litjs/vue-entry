@@ -10,7 +10,7 @@ window.onload = function () {
   '{{configInitStatement}}'.then(function (conf) {
     // 初始化国际化信息
     '{{i18nInitStatement}}'.then(function () {
-      '{{plugins}}'
+
       require('{{indexHtml}}');
       '{{configRequireStatement}}'
 
@@ -27,7 +27,9 @@ window.onload = function () {
       // 全局注册src/components及app下的vue组件
       '{{vueComponentSetValueStatements}}'
 
-      window._PRIVATE__.startApp(null, STORE, routes);
+      window._PRIVATE__.startApp(null, STORE, routes, function () {
+        '{{plugins}}'
+      });
     })
   })
 }

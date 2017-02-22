@@ -1,6 +1,5 @@
 import {
-  Vue,
-  i18n,
+  Vue
 } from './lib'
 
 import {boot} from './boot'
@@ -36,6 +35,8 @@ window._PRIVATE__.startApp = startApp
 window._PRIVATE__.initConfig = initConfig
 window._PRIVATE__.initI18n = initI18n
 
+window.$entry = {}
+
 // expose Vue global
 window.Vue = Vue
 
@@ -67,8 +68,8 @@ function initI18n() {
 }
 
 // Start app
-function startApp(unused, store, routes) {
+function startApp(unused, store, routes, pluginInitCallback) {
   setStore(store)
   initLog()
-  boot(store, routes)
+  boot(store, routes, pluginInitCallback)
 }
