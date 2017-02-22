@@ -363,7 +363,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
     var vueLib = `window.Vue = require('vue/dist/vue.common')
 window.VueI18n = require('vue-i18n/dist/vue-i18n.min')
 window.VueRouter  = require('vue-router/dist/vue-router.min')
-window.VueResource  = require('vue-resource/dist/vue-resource.min')`
+window.VueResource  = require('vue-resource/dist/vue-resource.min')
+window.Vuex  = require('vuex/dist/vuex.min')`
 
     return userConfig.vueLibBuildIn === false ? '' : vueLib
   }
@@ -375,8 +376,9 @@ window.VueResource  = require('vue-resource/dist/vue-resource.min')`
     var importStatement = []
 
     _.each(plugins, function (item) {
-      importStatement.push(`var plugin_${item} = require('vue-entry-plugin-${item}');
-      plugin_${item}.exec && plugin_${item}.exec(conf);`)
+      importStatement.push(`var plugin_${item.name} = require('vue-entry-plugin-${item.name}');
+      var plugin_${item.name}_options = ${JSON.stringify(item.options)};
+      plugin_${item.name}.exec && plugin_${item.name}.exec(plugin_${item.name}_options);`)
     })
 
     return importStatement.join('\n')

@@ -1,16 +1,12 @@
 import {
   Vue
 } from './lib'
-import {getState} from './stateManager'
 import {error} from './log'
 
 // all the vue components's instance saved in instanceContainer object.
 var instanceContainer = {}
 
 Vue.mixin({
-  beforeCreate(){
-    this.$store = getState()
-  },
   created() {
     var currentComponentName = this.$options._vue_component_name
 

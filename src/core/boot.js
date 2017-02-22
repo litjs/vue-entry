@@ -1,9 +1,11 @@
 import {
   Vue,
+  Vuex,
   VueRouter,
   VueResource,
-  i18n
+  VueI18n,
 } from './lib'
+import { sync } from 'vuex-router-sync'
 import {
   preLoadResource,
   setRouter,
@@ -12,13 +14,11 @@ import {
   setStore
 } from './utils'
 
-import {registerState} from './stateManager'
-
 Vue.use(VueRouter)
 Vue.use(VueResource)
-Vue.use(i18n)
+Vue.use(VueI18n)
 
-function boot(store, routes) {
+function boot(store, routes, pluginInitCallback) {
   var config = getConfig()
 
   const router = new VueRouter({
@@ -29,13 +29,18 @@ function boot(store, routes) {
   })
   setRouter(router)
 
+  let vuexStore = new Vuex.Store(store)
+  window.$entry.store = vuexStore
+  window.$entry.router = router
+
+  sync(vuexStore, router)
+
   var modules = store.modules
 
-  Object.keys(modules).forEach((module) =>{
-    registerState(module, modules[module].state)
-  })
+  pluginInitCallback && pluginInitCallback()
 
   var rootApp = new Vue({
+    store: vuexStore,
     router,
     render: h => h('router-view'),
     data: () => ({
