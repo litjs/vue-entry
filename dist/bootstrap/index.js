@@ -372,7 +372,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
   }
 
   function generateVueLibStatements() {
-    var vueLib = 'window.Vue = require(\'vue/dist/vue.common\')\nwindow.VueI18n = require(\'vue-i18n/dist/vue-i18n.min\')\nwindow.VueRouter  = require(\'vue-router/dist/vue-router.min\')\nwindow.VueResource  = require(\'vue-resource/dist/vue-resource.min\')';
+    var vueLib = 'window.Vue = require(\'vue/dist/vue.common\')\nwindow.VueI18n = require(\'vue-i18n/dist/vue-i18n.min\')\nwindow.VueRouter  = require(\'vue-router/dist/vue-router.min\')\nwindow.VueResource  = require(\'vue-resource/dist/vue-resource.min\')\nwindow.Vuex  = require(\'vuex/dist/vuex.min\')';
 
     return userConfig.vueLibBuildIn === false ? '' : vueLib;
   }
@@ -383,7 +383,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
     var importStatement = [];
 
     _lodash2.default.each(plugins, function (item) {
-      importStatement.push('var plugin_' + item + ' = require(\'vue-entry-plugin-' + item + '\');\n      plugin_' + item + '.exec && plugin_' + item + '.exec(conf);');
+      importStatement.push('var plugin_' + item.name + ' = require(\'vue-entry-plugin-' + item.name + '\');\n      var plugin_' + item.name + '_options = ' + JSON.stringify(item.options) + ';\n      plugin_' + item.name + '.exec && plugin_' + item.name + '.exec(plugin_' + item.name + '_options);');
     });
 
     return importStatement.join('\n');

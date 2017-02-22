@@ -63,7 +63,7 @@
 
 	var _locales2 = _interopRequireDefault(_locales);
 
-	var _utils = __webpack_require__(4);
+	var _utils = __webpack_require__(5);
 
 	var _log = __webpack_require__(7);
 
@@ -83,6 +83,8 @@
 	window._PRIVATE__.startApp = startApp;
 	window._PRIVATE__.initConfig = initConfig;
 	window._PRIVATE__.initI18n = initI18n;
+
+	window.$entry = {};
 
 	// expose Vue global
 	window.Vue = _lib.Vue;
@@ -115,10 +117,10 @@
 	}
 
 	// Start app
-	function startApp(unused, store, routes) {
+	function startApp(unused, store, routes, pluginInitCallback) {
 	  (0, _utils.setStore)(store);
 	  (0, _log.initLog)();
-	  (0, _boot.boot)(store, routes);
+	  (0, _boot.boot)(store, routes, pluginInitCallback);
 	}
 
 /***/ },
@@ -131,12 +133,14 @@
 	  value: true
 	});
 	var Vue = window.Vue;
-	var i18n = window.VueI18n;
+	var Vuex = window.Vuex;
+	var VueI18n = window.VueI18n;
 	var VueRouter = window.VueRouter;
 	var VueResource = window.VueResource;
 
 	exports.Vue = Vue;
-	exports.i18n = i18n;
+	exports.Vuex = Vuex;
+	exports.VueI18n = VueI18n;
 	exports.VueRouter = VueRouter;
 	exports.VueResource = VueResource;
 
@@ -153,15 +157,15 @@
 
 	var _lib = __webpack_require__(2);
 
-	var _utils = __webpack_require__(4);
+	var _vuexRouterSync = __webpack_require__(4);
 
-	var _stateManager = __webpack_require__(5);
+	var _utils = __webpack_require__(5);
 
 	_lib.Vue.use(_lib.VueRouter);
 	_lib.Vue.use(_lib.VueResource);
-	_lib.Vue.use(_lib.i18n);
+	_lib.Vue.use(_lib.VueI18n);
 
-	function boot(store, routes) {
+	function boot(store, routes, pluginInitCallback) {
 	  var config = (0, _utils.getConfig)();
 
 	  var router = new _lib.VueRouter({
@@ -172,13 +176,18 @@
 	  });
 	  (0, _utils.setRouter)(router);
 
+	  var vuexStore = new _lib.Vuex.Store(store);
+	  window.$entry.store = vuexStore;
+	  window.$entry.router = router;
+
+	  (0, _vuexRouterSync.sync)(vuexStore, router);
+
 	  var modules = store.modules;
 
-	  Object.keys(modules).forEach(function (module) {
-	    (0, _stateManager.registerState)(module, modules[module].state);
-	  });
+	  pluginInitCallback && pluginInitCallback();
 
 	  var rootApp = new _lib.Vue({
+	    store: vuexStore,
 	    router: router,
 	    render: function render(h) {
 	      return h('router-view');
@@ -201,6 +210,67 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports) {
+
+	exports.sync = function (store, router, options) {
+	  var moduleName = (options || {}).moduleName || 'route'
+
+	  store.registerModule(moduleName, {
+	    state: cloneRoute(router.currentRoute),
+	    mutations: {
+	      'router/ROUTE_CHANGED': function (state, transition) {
+	        store.state[moduleName] = cloneRoute(transition.to, transition.from)
+	      }
+	    }
+	  })
+
+	  var isTimeTraveling = false
+	  var currentPath
+
+	  // sync router on store change
+	  store.watch(
+	    function (state) { return state[moduleName] },
+	    function (route) {
+	      if (route.fullPath === currentPath) {
+	        return
+	      }
+	      isTimeTraveling = true
+	      currentPath = route.fullPath
+	      router.push(route)
+	    },
+	    { sync: true }
+	  )
+
+	  // sync store on router navigation
+	  router.afterEach(function (to, from) {
+	    if (isTimeTraveling) {
+	      isTimeTraveling = false
+	      return
+	    }
+	    currentPath = to.fullPath
+	    store.commit('router/ROUTE_CHANGED', { to: to, from: from })
+	  })
+	}
+
+	function cloneRoute (to, from) {
+	  var clone = {
+	    name: to.name,
+	    path: to.path,
+	    hash: to.hash,
+	    query: to.query,
+	    params: to.params,
+	    fullPath: to.fullPath,
+	    meta: to.meta
+	  }
+	  if (from) {
+	    clone.from = cloneRoute(from)
+	  }
+	  return Object.freeze(clone)
+	}
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -241,15 +311,9 @@
 	}
 
 	function getFixedMainLayout() {
-	  var header = document.createElement('header');
-	  var main = document.createElement('main');
-	  var footer = document.createElement('footer');
+	  var app = document.createElement('app');
 
-	  main.innerHTML = '<app></app>';
-
-	  window.document.body.appendChild(header);
-	  window.document.body.appendChild(main);
-	  window.document.body.appendChild(footer);
+	  window.document.body.appendChild(app);
 	}
 
 	function getState(vuexName) {
@@ -304,36 +368,6 @@
 	exports.getState = getState;
 
 /***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.getState = exports.registerState = undefined;
-
-	var _lib = __webpack_require__(2);
-
-	var stateManager = new _lib.Vue({
-	  data: function data() {
-	    return { gState: {} };
-	  }
-	});
-
-	function registerState(name, state) {
-	  stateManager.$set(stateManager.gState, name, state);
-	}
-
-	function getState() {
-	  return stateManager.gState;
-	}
-
-	exports.registerState = registerState;
-	exports.getState = getState;
-
-/***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -348,17 +382,12 @@
 
 	var _lib = __webpack_require__(2);
 
-	var _stateManager = __webpack_require__(5);
-
 	var _log = __webpack_require__(7);
 
 	// all the vue components's instance saved in instanceContainer object.
 	var instanceContainer = {};
 
 	_lib.Vue.mixin({
-	  beforeCreate: function beforeCreate() {
-	    this.$store = (0, _stateManager.getState)();
-	  },
 	  created: function created() {
 	    var currentComponentName = this.$options._vue_component_name;
 
