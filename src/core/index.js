@@ -58,9 +58,9 @@ function initConfig() {
 
 // get stand alone i18n file asynchronous.
 function initI18n() {
-  var langUrl = './' + (getConfig()['LANG'] || 'cn') + '.lang.json'
+  var langUrl = './' + (getConfig()['LANG'] || 'zh_CN') + '.lang.json'
   return Vue.http.get(langUrl).then((res) => {
-    var lang = getConfig()['LANG'] || getConfig()['lang'] || 'cn'
+    var lang = getConfig()['LANG'] || getConfig()['lang'] || 'zh_CN'
     Vue.config.lang = lang
 
     Vue.locale(lang, res.data)
