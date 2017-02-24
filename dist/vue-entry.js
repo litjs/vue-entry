@@ -69,10 +69,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_lib.Vue.getState = _utils.getState; // get vuex state
-	_lib.Vue.invoke = _instanceManager.invoke; // invoke method in vue component methods options.
-	_lib.Vue.getData = _instanceManager.getData; // get vue component data options value.
-	_lib.Vue.beforeInit = null; // callback before app start >params {config，router, routes，rootApp, next}
+	window.$entry = {};
+	window[window._$vueEntry_exportName] = window.$entry;
+	$entry.getState = _utils.getState; // get vuex state
+	$entry.invoke = _instanceManager.invoke; // invoke method in vue component methods options.
+	$entry.getData = _instanceManager.getData; // get vue component data options value.
+	$entry.beforeInit = null; // callback before app start >params {config，router, routes，rootApp, next}
 
 	// Vue extension for debug
 	_lib.Vue.prototype.$debug = _log.debug;
@@ -83,8 +85,6 @@
 	window._PRIVATE__.startApp = startApp;
 	window._PRIVATE__.initConfig = initConfig;
 	window._PRIVATE__.initI18n = initI18n;
-
-	window.$entry = {};
 
 	// expose Vue global
 	window.Vue = _lib.Vue;
@@ -302,7 +302,7 @@
 	}
 
 	function getUserConfig(key) {
-	  return window.Vue[key];
+	  return window.$entry[key];
 	}
 
 	// set page title

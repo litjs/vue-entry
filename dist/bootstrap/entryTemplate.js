@@ -1,5 +1,6 @@
 'use strict';
 '{{vue_lib}}';
+'{{exportName}}';
 
 require('{{vue_entry}}');
 require('es6-promise').polyfill();
