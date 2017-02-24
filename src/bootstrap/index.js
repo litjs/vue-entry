@@ -135,6 +135,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     let pluginStatement = generatePluginStatement();
 
+    let exportNameStatement = generateExportNameStatement();
+
     // 框架代码 引用路径
     let vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry'
 
@@ -142,6 +144,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
       vue_lib: {content: vueLibStatements, statement: true},
       vue_entry: {content: vueEntryPath, relativePath: false, required: true},
       plugins: {content: pluginStatement, statement: true},
+      exportName: {content: exportNameStatement, statement: true},
 
       stateImportStatements: {content: stateStatements.import, statement: true},
       stateSetValueStatements: {content: stateStatements.setValue, statement: true},
@@ -382,6 +385,12 @@ window.Vuex  = require('vuex/dist/vuex.min')`
     })
 
     return importStatement.join('\n')
+  }
+
+  function generateExportNameStatement(){
+    var exportName = userConfig.exportName || "$entry";
+
+    return `window._$vueEntry_exportName = "${exportName}";`
   }
 
   return entrys

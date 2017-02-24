@@ -23,7 +23,7 @@ function preLoadResource(next, routes) {
 }
 
 function getUserConfig(key) {
-  return window.Vue[key]
+  return window.$entry[key]
 }
 
 // set page title

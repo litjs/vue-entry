@@ -20,10 +20,12 @@ import {
   initLog
 } from './log'
 
-Vue.getState = getState // get vuex state
-Vue.invoke = invoke // invoke method in vue component methods options.
-Vue.getData = getData // get vue component data options value.
-Vue.beforeInit = null // callback before app start >params {config，router, routes，rootApp, next}
+window.$entry = {}
+window[window._$vueEntry_exportName] = window.$entry
+$entry.getState = getState // get vuex state
+$entry.invoke = invoke // invoke method in vue component methods options.
+$entry.getData = getData // get vue component data options value.
+$entry.beforeInit = null // callback before app start >params {config，router, routes，rootApp, next}
 
 // Vue extension for debug
 Vue.prototype.$debug = debug
@@ -34,8 +36,6 @@ window._PRIVATE__ = {}
 window._PRIVATE__.startApp = startApp
 window._PRIVATE__.initConfig = initConfig
 window._PRIVATE__.initI18n = initI18n
-
-window.$entry = {}
 
 // expose Vue global
 window.Vue = Vue
