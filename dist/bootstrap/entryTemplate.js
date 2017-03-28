@@ -7,30 +7,30 @@ require('es6-promise').polyfill();
 
 // 等app定制文件加载完成后进行初始化
 window.onload = function () {
-      // 初始化（获取config.json信息）
-      '{{configInitStatement}}'.then(function (conf) {
-            // 初始化国际化信息
-            '{{i18nInitStatement}}'.then(function () {
+  // 初始化（获取config.json信息）
+  '{{configInitStatement}}'.then(function (conf) {
+    // 初始化国际化信息
+    '{{i18nInitStatement}}'.then(function () {
 
-                  require('{{indexHtml}}');
-                  '{{configRequireStatement}}';
+      require('{{indexHtml}}');
+      '{{configRequireStatement}}';
 
-                  // 国际化文件导入
-                  '{{i18nRequireStatements}}';
+      // 国际化文件导入
+      '{{i18nRequireStatements}}';
 
-                  '{{routes}}';
+      '{{routes}}';
 
-                  '{{stateImportStatements}}';
-                  '{{vueComponentImportStatements}}';
+      '{{stateImportStatements}}';
+      '{{vueComponentImportStatements}}';
 
-                  '{{stateSetValueStatements}}';
+      '{{stateSetValueStatements}}';
 
-                  // 全局注册src/components及app下的vue组件
-                  '{{vueComponentSetValueStatements}}';
+      // 全局注册src/components及app下的vue组件
+      '{{vueComponentSetValueStatements}}';
 
-                  window._PRIVATE__.startApp(null, STORE, routes, function () {
-                        '{{plugins}}';
-                  });
-            });
+      window._PRIVATE__.startApp(null, STORE, routes, function () {
+        '{{plugins}}';
       });
+    });
+  });
 };
