@@ -364,10 +364,10 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
   function generateVueLibStatements() {
     var vueLib = `window.Vue = require('vue/dist/vue.common')
-window.VueI18n = require('vue-i18n/dist/vue-i18n.min')
-window.VueRouter  = require('vue-router/dist/vue-router.min')
-window.VueResource  = require('vue-resource/dist/vue-resource.min')
-window.Vuex  = require('vuex/dist/vuex.min')`
+window.VueI18n = require('vue-i18n/dist/vue-i18n')
+window.VueRouter  = require('vue-router/dist/vue-router')
+window.VueResource  = require('vue-resource/dist/vue-resource')
+window.Vuex  = require('vuex/dist/vuex')`
 
     return userConfig.vueLibBuildIn === false ? '' : vueLib
   }
