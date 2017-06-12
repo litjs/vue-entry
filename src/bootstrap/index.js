@@ -204,7 +204,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
   function generateStateStatements(fileList) {
     let uniqueIndex = 0
     let importTpl = []
-    let setValueTpl = ['const STORE = {modules: {}};']
+    let setValueTpl = ['var STORE = {modules: {}};']
     fileList.forEach(function (stateFile) {
       let filename = ''
 
