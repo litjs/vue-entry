@@ -1,5 +1,5 @@
 # vue-entry [![Build Status](https://img.shields.io/circleci/project/litjs/vue-entry/master.svg)](https://circleci.com/gh/litjs/vue-entry) [![npm package](https://img.shields.io/npm/v/vue-entry.svg)](https://www.npmjs.com/package/vue-entry)
-An entry boot for Vue.js projects.
+An entry boot for Vue2 projects.
 
 ### Installation
 ```
@@ -24,7 +24,12 @@ module.exports = {
   "src": './src', // An relative path for the source. Default: './src'. normally  include pages and components folders in it.
   "autoImportVueComponent": true, // vue component import and registered to Vue globally.
   "langs": ["zh_CN"], //  export in .i18n.js file
-  "vueLibBuildIn":true, // include vue.js, vue-router.js, vue-resource.js, vue-i18n.js. if setting false, using script tag for global use manually. 
+  "vueLibBuildIn":true, // include vue.js, vue-router.js, vue-resource.js, vue-i18n.js. if setting false, using script tag for global use manually.
+   "rem":{ // rem setting for mobile app
+      designWidth: 640,
+      designHeight: 1136,
+      designFontSize: 20
+   }
 }
 ```
 
@@ -74,5 +79,11 @@ module.exports = {
 1. standalone config file
     
 2. standalone i18n file
-    
+
+3. standalone vuex file
+
+4. log method($debug and $error) for vue component object
+
+
+
     
