@@ -76,6 +76,7 @@
 	$entry.getState = _utils.getState; // get vuex state
 	$entry.invoke = _instanceManager.invoke; // invoke method in vue component methods options.
 	$entry.getData = _instanceManager.getData; // get vue component data options value.
+	$entry.getComponent = _instanceManager.getComponent; // get vue component instance.
 	$entry.beforeInit = null; // callback before app start >params {config，router, routes，rootApp, next}
 
 	// Vue extension for debug
@@ -383,7 +384,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getData = exports.invoke = undefined;
+	exports.getComponent = exports.getData = exports.invoke = undefined;
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -447,8 +448,18 @@
 	  return instanceContainer[componentName].$data;
 	}
 
+	function getComponent(componentName) {
+	  if (!instanceContainer[componentName]) {
+	    (0, _log.error)(componentName + '.vue\u4E0D\u5B58\u5728\uFF01', true);
+	    return;
+	  }
+
+	  return instanceContainer[componentName];
+	}
+
 	exports.invoke = invoke;
 	exports.getData = getData;
+	exports.getComponent = getComponent;
 
 /***/ },
 /* 7 */

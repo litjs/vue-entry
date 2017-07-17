@@ -3,7 +3,7 @@ import {
 } from './lib'
 
 import {boot} from './boot'
-import {invoke, getData} from './instanceManager'
+import {invoke, getData, getComponent} from './instanceManager'
 import locales from './locales'
 import {computeRootSize} from './computeRootFontSize'
 
@@ -26,6 +26,7 @@ window[window._$vueEntry_exportName] = window.$entry
 $entry.getState = getState // get vuex state
 $entry.invoke = invoke // invoke method in vue component methods options.
 $entry.getData = getData // get vue component data options value.
+$entry.getComponent = getComponent // get vue component instance.
 $entry.beforeInit = null // callback before app start >params {config，router, routes，rootApp, next}
 
 // Vue extension for debug

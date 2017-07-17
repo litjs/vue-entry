@@ -50,4 +50,13 @@ function getData(componentName) {
   return instanceContainer[componentName].$data
 }
 
-export {invoke, getData}
+function getComponent(componentName) {
+  if (!instanceContainer[componentName]) {
+    error(`${componentName}.vue不存在！`, true)
+    return
+  }
+
+  return  instanceContainer[componentName]
+}
+
+export {invoke, getData, getComponent}
