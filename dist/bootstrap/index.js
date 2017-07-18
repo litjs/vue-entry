@@ -125,6 +125,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     var indexHtmlFilePath = path.resolve(srcFolder) + (appRelativePath + '/index.html');
     var configFilePath = path.resolve(srcFolder) + (appRelativePath + '/config.json');
+    var serviceFilePath = path.resolve(srcFolder) + (appRelativePath + '/service.js');
 
     // 多app模式时， components文件夹和全局国际化文件共享
     if (!singleApp) {
@@ -151,6 +152,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     var setRootFontSizeStatement = generateSetRootFontSizeStatement();
 
+    var serviceStatement = generateServiceStatements(serviceFilePath);
+
     // 框架代码 引用路径
     var vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry';
 
@@ -160,6 +163,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
       vue_entry: { content: vueEntryPath, relativePath: false, required: true },
       plugins: { content: pluginStatement, statement: true },
       exportName: { content: exportNameStatement, statement: true },
+
+      serviceStatement: { content: serviceStatement, statement: true },
 
       stateImportStatements: { content: stateStatements.import, statement: true },
       stateSetValueStatements: { content: stateStatements.setValue, statement: true },
@@ -407,6 +412,16 @@ function generatorEntryFiles(path, userConfig, entrys) {
     }
 
     return '\'\'';
+  }
+
+  function generateServiceStatements(filePath) {
+    var statements = '';
+
+    if (_fs2.default.existsSync(filePath)) {
+      statements = '\n      var service = require(\'' + (0, _utils.relativePath)(filePath) + '\');\n      \n      Vue.mixin({\n        computed:{\n          $service:function () {\n            return service.default\n          }\n        }\n      });\n';
+    }
+
+    return statements;
   }
 
   return entrys;

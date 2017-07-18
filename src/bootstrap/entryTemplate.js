@@ -17,6 +17,8 @@ window.onload = function () {
       // 国际化文件导入
       '{{i18nRequireStatements}}'
 
+      '{{serviceStatement}}'
+
       '{{routes}}'
 
       '{{stateImportStatements}}'
