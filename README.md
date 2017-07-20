@@ -25,11 +25,7 @@ module.exports = {
   "autoImportVueComponent": true, // vue component import and registered to Vue globally.
   "langs": ["zh_CN"], //  export in .i18n.js file
   "vueLibBuildIn":true, // include vue.js, vue-router.js, vue-resource.js, vue-i18n.js. if setting false, using script tag for global use manually.
-   "rem":{ // rem setting for mobile app
-      designWidth: 640,
-      designHeight: 1136,
-      designFontSize: 20
-   }
+   "rootFontSize":16 // designer width / 10
 }
 ```
 
