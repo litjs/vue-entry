@@ -5,7 +5,7 @@ import {
 import {boot} from './boot'
 import {invoke, getData, getComponent} from './instanceManager'
 import locales from './locales'
-import {computeRootSize} from './computeRootFontSize'
+import './flexible'
 
 import {
   setConfig,
@@ -41,11 +41,6 @@ window._PRIVATE__.initI18n = initI18n
 
 // expose Vue global
 window.Vue = Vue
-
-// mobile rem root footsize setting
-if(window.$entry_APP_DESIGN_SIZE){
-  computeRootSize(window, window.$entry_APP_DESIGN_SIZE)
-}
 
 // get stand alone config file asynchronous.
 function initConfig() {

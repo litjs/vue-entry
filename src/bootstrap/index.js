@@ -138,15 +138,12 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     let exportNameStatement = generateExportNameStatement();
 
-    let setRootFontSizeStatement = generateSetRootFontSizeStatement();
-
     let serviceStatement = generateServiceStatements(serviceFilePath)
 
     // 框架代码 引用路径
     let vueEntryPath = userConfig.production ? '../../vue-entry' : '../../vue-entry'
 
     let fileContent = templateReplace(appEntryTemplate, {
-      setRootFontSize: {content: setRootFontSizeStatement, statement: true},
       vue_lib: {content: vueLibStatements, statement: true},
       vue_entry: {content: vueEntryPath, relativePath: false, required: true},
       plugins: {content: pluginStatement, statement: true},
@@ -399,18 +396,6 @@ window.Vuex  = require('vuex/dist/vuex')`
     var exportName = userConfig.exportName || "$entry";
 
     return `window._$vueEntry_exportName = "${exportName}";`
-  }
-
-  function generateSetRootFontSizeStatement() {
-      if(userConfig.rem){
-        return `window.$entry_APP_DESIGN_SIZE = {
-          designWidth: ${userConfig.rem.designWidth || 640},
-          designHeight: ${userConfig.rem.designHeight || 1136},
-          designFontSize: ${userConfig.rem.designFontSize || 20}
-        }`
-      }
-
-      return `''`
   }
 
   function generateServiceStatements(filePath) {

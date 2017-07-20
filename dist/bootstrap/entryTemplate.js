@@ -1,7 +1,6 @@
 'use strict';
 '{{vue_lib}}';
 '{{exportName}}';
-'{{setRootFontSize}}';
 
 require('{{vue_entry}}');
 require('es6-promise').polyfill();
