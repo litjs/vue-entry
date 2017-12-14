@@ -188,9 +188,9 @@ function generatorEntryFiles(path, userConfig, entrys) {
     if (fs.existsSync(routesJs)) {
       routeStatement = `var routes = require('${relativePath(routesJs)}').default`
     } else if (fs.existsSync(indexVue)) {
-      routeStatement = `var routes = [{path:'/', component: require('${relativePath(indexVue)}')}]`
+      routeStatement = `var routes = [{path:'*', component: require('${relativePath(indexVue)}')}]`
     } else if (fs.existsSync(indexVueFolder)) {
-      routeStatement = `var routes = [{path:'/', component: require('${relativePath(indexVueFolder)}')}]`
+      routeStatement = `var routes = [{path:'*', component: require('${relativePath(indexVueFolder)}')}]`
     } else {
       error('没有找到routes.js或index.vue文件')
     }

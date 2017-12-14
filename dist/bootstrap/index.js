@@ -200,9 +200,9 @@ function generatorEntryFiles(path, userConfig, entrys) {
     if (_fs2.default.existsSync(routesJs)) {
       routeStatement = 'var routes = require(\'' + (0, _utils.relativePath)(routesJs) + '\').default';
     } else if (_fs2.default.existsSync(indexVue)) {
-      routeStatement = 'var routes = [{path:\'/\', component: require(\'' + (0, _utils.relativePath)(indexVue) + '\')}]';
+      routeStatement = 'var routes = [{path:\'*\', component: require(\'' + (0, _utils.relativePath)(indexVue) + '\')}]';
     } else if (_fs2.default.existsSync(indexVueFolder)) {
-      routeStatement = 'var routes = [{path:\'/\', component: require(\'' + (0, _utils.relativePath)(indexVueFolder) + '\')}]';
+      routeStatement = 'var routes = [{path:\'*\', component: require(\'' + (0, _utils.relativePath)(indexVueFolder) + '\')}]';
     } else {
       (0, _utils.error)('没有找到routes.js或index.vue文件');
     }

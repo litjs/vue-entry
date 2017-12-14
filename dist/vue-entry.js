@@ -42,14 +42,14 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(1);
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -126,9 +126,9 @@
 	  (0, _boot.boot)(store, routes, pluginInitCallback);
 	}
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -147,9 +147,9 @@
 	exports.VueRouter = VueRouter;
 	exports.VueResource = VueResource;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -211,17 +211,18 @@
 
 	exports.boot = boot;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	exports.sync = function (store, router, options) {
 	  var moduleName = (options || {}).moduleName || 'route'
 
 	  store.registerModule(moduleName, {
+	    namespaced: true,
 	    state: cloneRoute(router.currentRoute),
 	    mutations: {
-	      'router/ROUTE_CHANGED': function (state, transition) {
+	      'ROUTE_CHANGED': function ROUTE_CHANGED (state, transition) {
 	        store.state[moduleName] = cloneRoute(transition.to, transition.from)
 	      }
 	    }
@@ -231,28 +232,46 @@
 	  var currentPath
 
 	  // sync router on store change
-	  store.watch(
-	    function (state) { return state[moduleName] },
+	  var storeUnwatch = store.watch(
+	    function (state) { return state[moduleName]; },
 	    function (route) {
-	      if (route.fullPath === currentPath) {
+	      var fullPath = route.fullPath;
+	      if (fullPath === currentPath) {
 	        return
 	      }
-	      isTimeTraveling = true
-	      currentPath = route.fullPath
-	      router.push(route)
+	      if (currentPath != null) {
+	        isTimeTraveling = true
+	        router.push(route)
+	      }
+	      currentPath = fullPath
 	    },
 	    { sync: true }
 	  )
 
 	  // sync store on router navigation
-	  router.afterEach(function (to, from) {
+	  var afterEachUnHook = router.afterEach(function (to, from) {
 	    if (isTimeTraveling) {
 	      isTimeTraveling = false
 	      return
 	    }
 	    currentPath = to.fullPath
-	    store.commit('router/ROUTE_CHANGED', { to: to, from: from })
+	    store.commit(moduleName + '/ROUTE_CHANGED', { to: to, from: from })
 	  })
+
+	  return function unsync () {
+	    // On unsync, remove router hook
+	    if (afterEachUnHook != null) {
+	      afterEachUnHook()
+	    }
+
+	    // On unsync, remove store watch
+	    if (storeUnwatch != null) {
+	      storeUnwatch()
+	    }
+
+	    // On unsync, unregister Module with store
+	    store.unregisterModule(moduleName)
+	  }
 	}
 
 	function cloneRoute (to, from) {
@@ -272,9 +291,10 @@
 	}
 
 
-/***/ },
+
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -370,9 +390,9 @@
 	exports.preLoadResource = preLoadResource;
 	exports.getState = getState;
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -456,9 +476,9 @@
 	exports.getData = getData;
 	exports.getComponent = getComponent;
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -545,9 +565,9 @@
 	exports.setConfig = setConfig;
 	exports.initLog = initLog;
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -570,9 +590,9 @@
 	  return { cn: cn, en: en };
 	};
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -692,5 +712,5 @@
 	  };
 	})(window, window['lib'] || (window['lib'] = {}));
 
-/***/ }
+/***/ })
 /******/ ]);
