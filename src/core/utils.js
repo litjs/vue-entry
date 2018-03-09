@@ -28,7 +28,7 @@ function getUserConfig(key) {
 
 // set page title
 function setTitle() {
-  window.document.getElementsByTagName('title').innerTHML = gConfig['APP_NAME']
+  window.document.title = gConfig['APP_NAME']
 }
 
 function getFixedMainLayout() {
