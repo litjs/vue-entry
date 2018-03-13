@@ -330,7 +330,7 @@
 
 	// set page title
 	function setTitle() {
-	  window.document.title = gConfig['APP_NAME'];
+	  window.document.title = gConfig['APP_NAME'] || window.document.title;
 	}
 
 	function getFixedMainLayout() {
