@@ -10,10 +10,6 @@ var plugins = [
     moveToParents: true,
   }),
 
-  new webpack.optimize.DedupePlugin(),
-
-  new webpack.NoErrorsPlugin(),
-
   new webpack.DefinePlugin({
     DEBUG: config.isDebug,
     NODE_ENV: `'${config.NODE_ENV}'`

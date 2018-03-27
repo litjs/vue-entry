@@ -7,21 +7,17 @@ import config from '../config'
 import loaders from './webpack.loaders'
 import plugins from './webpack.plugins'
 
-var includePaths = [
-  path.resolve(__dirname, './bower_components'),
-]
-
 export default {
 
   context: path.resolve(config.src),
 
   resolve: {
-    root: [
+    modules: [
       path.resolve(config.src),
       path.resolve('./node_modules/'),
     ],
     alias: {},
-    extensions: ['', '.js']
+    extensions: ['.js']
   },
 
   output: {
@@ -38,34 +34,6 @@ export default {
 
   // http://habrahabr.ru/post/245991/
   plugins: plugins,
-
-  postcss: () => [
-    autoprefixer({
-      browsers: ['last 3 versions'],
-      cascade: false,
-    }),
-    // precss,
-  ],
-
-  cssLoader: {
-    sourceMap: config.isDevelope,
-    localIdentName: config.isDevelope ? '[local]' : '[hash:5]',
-  },
-
-  sassLoader: {
-    includePaths: includePaths,
-    sourceMap: true,
-  },
-
-  lessLoader: {
-    includePaths: includePaths,
-    sourceMap: true,
-  },
-
-  jadeLoader: {
-    locals: config,
-    pretty: config.isDevelope,
-  },
 
   devtool: config.isDebug ? '#inline-source-map' : false,
 }

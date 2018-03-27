@@ -1,5 +1,7 @@
 # vue-entry [![Build Status](https://img.shields.io/circleci/project/litjs/vue-entry/master.svg)](https://circleci.com/gh/litjs/vue-entry) [![npm package](https://img.shields.io/npm/v/vue-entry.svg)](https://www.npmjs.com/package/vue-entry)
-An entry boot for Vue2 projects.
+An entry boot for Vue2 projects. auto generate entry Object for webpack config entry option.
+
+[使用实例](https://github.com/litjs/vue-builder)
 
 ### Installation
 ```
@@ -25,7 +27,7 @@ module.exports = {
   "autoImportVueComponent": true, // vue component import and registered to Vue globally.
   "langs": ["zh_CN"], //  export in .i18n.js file
   "vueLibBuildIn":true, // include vue.js, vue-router.js, vue-resource.js, vue-i18n.js. if setting false, using script tag for global use manually.
-   "rootFontSize":16 // designer width / 10
+  "rootFontSize":16 // designer width / 10
 }
 ```
 

@@ -7,7 +7,7 @@ loaders.js = {
   test: /\.js$/i,
   include: path.resolve(config.src),
   exclude: [/\/node_modules\//, /\/bower_components\//],
-  loader: 'babel',
+  loader: 'babel-loader',
 }
 
 loaders.template = {
@@ -18,7 +18,7 @@ loaders.template = {
 
 loaders.html = {
   test: /\.html$/i,
-  loader: 'html',
+  loader: 'html-loader',
 }
 
 export default [
