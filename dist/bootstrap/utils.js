@@ -96,7 +96,7 @@ function checkFileNameValid(filename, fileType) {
 function translateEs6to5(file) {
   var content = _fs2.default.readFileSync(file);
   var result = babel.transform(content, {
-    presets: ['es2015']
+    presets: ['env']
   });
   var exports = {};
   eval(result.code);
