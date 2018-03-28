@@ -1,4 +1,4 @@
-# vue-entry [![Build Status](https://img.shields.io/circleci/project/litjs/vue-entry/master.svg)](https://circleci.com/gh/litjs/vue-entry) [![npm package](https://img.shields.io/npm/v/vue-entry.svg)](https://www.npmjs.com/package/vue-entry)
+# vue-entry [![npm package](https://img.shields.io/npm/v/vue-entry.svg)](https://www.npmjs.com/package/vue-entry)
 An entry boot for Vue2 projects. auto generate entry Object for webpack config entry option.
 
 [使用实例](https://github.com/litjs/vstarter)
