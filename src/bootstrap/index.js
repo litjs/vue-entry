@@ -34,7 +34,7 @@ export default (userConfig) => {
   srcFolder = userConfig.srcFolder
   componentsFolder = userConfig.componentsFolder
 
-  singleApp = isSingleAppMode(srcFolder)
+  singleApp = userConfig.singleApp
 
   generatorEntryFiles(path, userConfig, entrys)
 
@@ -108,7 +108,6 @@ function generatorEntryFiles(path, userConfig, entrys) {
     // 获取app下的使用的国际化文件路径列表
     let appI18nFilesPath = glob.sync(path.resolve(srcFolder) + `${appRelativePath}/**/*.i18n.js`)
 
-    let indexHtmlFilePath = path.resolve(srcFolder) + `${appRelativePath}/index.html`
     let configFilePath = path.resolve(srcFolder) + `${appRelativePath}/config.json`
     let serviceFilePath = path.resolve(srcFolder) + `${appRelativePath}/service.js`
 
@@ -118,6 +117,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
       appI18nFilesPath = appI18nFilesPath.concat(glob.sync(path.resolve(srcFolder) + '/*.i18n.js'))
     }
 
+    let indexHtmlFilePath = generateIndexHtmlPath(appRelativePath)
 
     let vueLibStatements = generateVueLibStatements()
 
@@ -176,6 +176,16 @@ function generatorEntryFiles(path, userConfig, entrys) {
     entrys[appName + '/__main_entry__'] = entryFilePath
   })
 
+  function generateIndexHtmlPath(appRelativePath) {
+    var defaultPath = path.resolve(srcFolder) + `${appRelativePath}/index.html`
+
+    if(fs.existsSync(path)){
+      return defaultPath
+    }else{
+      return __dirname + '/index.html'
+    }
+  }
+
   function generateRouteStatements(appName) {
     var routeStatement = ''
     var appRelativePath = singleApp ? '/.' : ('/apps/' + appName)
@@ -189,7 +199,9 @@ function generatorEntryFiles(path, userConfig, entrys) {
       routeStatement = `var routes = [{path:'*', component: require('${relativePath(indexVue)}')}]`
     } else if (fs.existsSync(indexVueFolder)) {
       routeStatement = `var routes = [{path:'*', component: require('${relativePath(indexVueFolder)}')}]`
-    } else {
+    } else if(singleApp){
+      routeStatement = `var routes = require('${relativePath(routesJs)}').default`
+    }else{
       error('没有找到routes.js或index.vue文件')
     }
 

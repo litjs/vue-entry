@@ -52,7 +52,7 @@ exports.default = function (userConfig) {
   srcFolder = userConfig.srcFolder;
   componentsFolder = userConfig.componentsFolder;
 
-  singleApp = (0, _utils.isSingleAppMode)(srcFolder);
+  singleApp = userConfig.singleApp;
 
   generatorEntryFiles(_path2.default, userConfig, entrys);
 
@@ -121,7 +121,6 @@ function generatorEntryFiles(path, userConfig, entrys) {
     // 获取app下的使用的国际化文件路径列表
     var appI18nFilesPath = _glob2.default.sync(path.resolve(srcFolder) + (appRelativePath + '/**/*.i18n.js'));
 
-    var indexHtmlFilePath = path.resolve(srcFolder) + (appRelativePath + '/index.html');
     var configFilePath = path.resolve(srcFolder) + (appRelativePath + '/config.json');
     var serviceFilePath = path.resolve(srcFolder) + (appRelativePath + '/service.js');
 
@@ -130,6 +129,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
       appVueFilesPath = appVueFilesPath.concat(_glob2.default.sync(path.resolve(componentsFolder) + '/**/*.vue'));
       appI18nFilesPath = appI18nFilesPath.concat(_glob2.default.sync(path.resolve(srcFolder) + '/*.i18n.js'));
     }
+
+    var indexHtmlFilePath = generateIndexHtmlPath(appRelativePath);
 
     var vueLibStatements = generateVueLibStatements();
 
@@ -188,6 +189,16 @@ function generatorEntryFiles(path, userConfig, entrys) {
     entrys[appName + '/__main_entry__'] = entryFilePath;
   });
 
+  function generateIndexHtmlPath(appRelativePath) {
+    var defaultPath = path.resolve(srcFolder) + (appRelativePath + '/index.html');
+
+    if (_fs2.default.existsSync(path)) {
+      return defaultPath;
+    } else {
+      return __dirname + '/index.html';
+    }
+  }
+
   function generateRouteStatements(appName) {
     var routeStatement = '';
     var appRelativePath = singleApp ? '/.' : '/apps/' + appName;
@@ -201,6 +212,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
       routeStatement = 'var routes = [{path:\'*\', component: require(\'' + (0, _utils.relativePath)(indexVue) + '\')}]';
     } else if (_fs2.default.existsSync(indexVueFolder)) {
       routeStatement = 'var routes = [{path:\'*\', component: require(\'' + (0, _utils.relativePath)(indexVueFolder) + '\')}]';
+    } else if (singleApp) {
+      routeStatement = 'var routes = require(\'' + (0, _utils.relativePath)(routesJs) + '\').default';
     } else {
       (0, _utils.error)('没有找到routes.js或index.vue文件');
     }
