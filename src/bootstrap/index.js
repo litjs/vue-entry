@@ -172,7 +172,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
       tempFileContents[entryFilePath] = fileContent
     }
 
-    entrys[appName + '/__main_entry__'] = entryFilePath
+    entrys[appName + '/'+ userConfig.chunkName] = entryFilePath
   })
 
   function generateIndexHtmlPath(appRelativePath) {
