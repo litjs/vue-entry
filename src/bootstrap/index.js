@@ -12,7 +12,6 @@ import {
   translateEs6to5,
   relativePath,
   templateReplace,
-  isSingleAppMode,
   error,
   initConfig,
   getConfig

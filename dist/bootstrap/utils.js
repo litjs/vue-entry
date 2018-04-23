@@ -155,12 +155,19 @@ function isSingleAppMode(config) {
     initConfig(config);
   }
   var projectType = null;
-  var indexHtml = _path2.default.resolve(userConfig.srcFolder) + '/index.html';
-  if (_fs2.default.existsSync(indexHtml)) {
+  var appsPath = _path2.default.resolve(userConfig.srcFolder) + '/apps';
+
+  try {
+    var stat = _fs2.default.lstatSync(appsPath);
+
+    if (!stat.isDirectory()) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err) {
     return true;
   }
-
-  return false;
 }
 
 function error(message) {
