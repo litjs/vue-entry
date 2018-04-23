@@ -53,7 +53,7 @@ function initConfig(conf) {
 
   userConfig.srcFolder = conf.src || './src';
   userConfig.componentsFolder = conf.components || conf.src + "/components";
-  userConfig.singleApp = conf.singleApp || isSingleAppMode(conf.src);
+  userConfig.singleApp = isSingleAppMode(conf.src);
 }
 
 function getConfig() {
