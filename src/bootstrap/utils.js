@@ -137,9 +137,9 @@ function isSingleAppMode(config) {
     let stat = fs.lstatSync(appsPath)
 
     if (!stat.isDirectory()) {
-      return false
-    }else{
       return true
+    }else{
+      return false
     }
 
   }catch(err){

@@ -178,7 +178,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
   function generateIndexHtmlPath(appRelativePath) {
     var defaultPath = path.resolve(srcFolder) + `${appRelativePath}/index.html`
 
-    if(fs.existsSync(path)){
+    if(fs.existsSync(path) || !singleApp){
       return defaultPath
     }else{
       return __dirname + '/index.html'

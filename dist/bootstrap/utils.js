@@ -161,9 +161,9 @@ function isSingleAppMode(config) {
     var stat = _fs2.default.lstatSync(appsPath);
 
     if (!stat.isDirectory()) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   } catch (err) {
     return true;
