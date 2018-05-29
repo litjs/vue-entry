@@ -130,13 +130,22 @@ function isSingleAppMode(config) {
   if(!userConfig.srcFolder){
     initConfig(config)
   }
+
   var projectType = null
-  var indexHtml = path.resolve(userConfig.srcFolder) + '/index.html'
-  if (fs.existsSync(indexHtml)) {
+  var appsPath = path.resolve(userConfig.srcFolder) + '/apps'
+
+  try{
+    let stat = fs.lstatSync(appsPath)
+
+    if (!stat.isDirectory()) {
+      return true
+    }else{
+      return false
+    }
+
+  }catch(err){
     return true
   }
-
-  return false
 }
 
 function error(message) {
