@@ -1,6 +1,6 @@
 {
   "name": "vue-entry",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "",
   "main": "dist/bootstrap/index.js",
   "scripts": {
