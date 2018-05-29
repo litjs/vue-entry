@@ -272,15 +272,15 @@ function generatorEntryFiles(path, userConfig, entrys) {
     }
 
     // 为app在tempfile文件夹中生成国际化文件
-    generateI18nFile(appI18nFilesPath, appName)
+    var langs = generateI18nFile(appI18nFilesPath, appName)
 
     var importI18nArray = []
-    userConfig.langs.forEach(function (item) {
+    langs.forEach(function (item) {
       importI18nArray.push(`require("./${appName}/${item}.lang.json")`)
     })
 
     i18nStatements.require = importI18nArray.join('\n')
-    i18nStatements.init = 'window._PRIVATE__.initI18n()'
+    i18nStatements.init = `window.__i18n_list=${JSON.stringify(langs || [])};window._PRIVATE__.initI18n()`
 
     return i18nStatements
   }
@@ -298,13 +298,31 @@ function generatorEntryFiles(path, userConfig, entrys) {
       return
     }
 
+    var i18nFileList = []
+
+    var langs = []
+
     fileList.forEach(function (i18nFile) {
       let filename = i18nFile.replace(/.*\/([^\/]*)\.i18n\.js/, '$1')
       checkFileDuplicate(fileList, filename, 'i18n.js')
 
       var exports = translateEs6to5(i18nFile);
 
-      userConfig.langs.forEach(function (item) {
+      Object.keys(exports.default).forEach(function (item) {
+        if(langs.indexOf(item) == -1){
+          langs.push(item)
+        }
+      })
+
+      i18nFileList.push({filename:filename, content:exports})
+    })
+
+
+    i18nFileList.forEach(function (file) {
+      var filename = file.filename
+      var exports = file.content
+
+      langs.forEach(function (item) {
         if (singleApp) {
           i18nContainer[item] = i18nContainer[item] || {}
           i18nContainer[item][filename] = (exports.default && exports.default[item]) || {};
@@ -318,10 +336,10 @@ function generatorEntryFiles(path, userConfig, entrys) {
           }
         }
       });
-    })
+    });
 
     if (singleApp) {
-      userConfig.langs.forEach(function (item) {
+      langs.forEach(function (item) {
         var fileContent = beautify.js_beautify(JSON.stringify(i18nContainer[item] || ''), {indent_size: 2})
         var filePath = __dirname + '/tempfiles/' + item + '.lang.json'
         if (tempFileContents[filePath] != fileContent) {
@@ -332,7 +350,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
     } else {
       Object.keys(i18nContainer).forEach(function (appName) {
         var appPath = __dirname + '/tempfiles/' + appName + '/'
-        userConfig.langs.forEach(function (item) {
+        langs.forEach(function (item) {
           var fileContent = beautify.js_beautify(JSON.stringify(i18nContainer[appName][item] || ''), {indent_size: 2})
           var filePath = appPath + item + '.lang.json'
           if (tempFileContents[filePath] != fileContent) {
@@ -342,6 +360,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
         })
       })
     }
+
+    return langs
   }
 
   /**

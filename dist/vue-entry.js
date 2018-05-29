@@ -110,7 +110,7 @@
 
 	// get stand alone i18n file asynchronous.
 	function initI18n() {
-	  var langUrl = './' + ((0, _utils.getConfig)()['LANG'] || 'zh_CN') + '.lang.json';
+	  var langUrl = './' + ((0, _utils.getConfig)()['LANG'] || window.__i18n_list[0]) + '.lang.json';
 	  return _lib.Vue.http.get(langUrl).then(function (res) {
 	    var lang = (0, _utils.getConfig)()['LANG'] || (0, _utils.getConfig)()['lang'] || 'zh_CN';
 	    _lib.Vue.config.lang = lang;
