@@ -1,5 +1,6 @@
 '{{vue_lib}}'
 '{{exportName}}'
+'{{mixin}}'
 require('{{vue_entry}}')
 require('es6-promise').polyfill()
 

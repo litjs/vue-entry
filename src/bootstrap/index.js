@@ -138,6 +138,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
 
     let exportNameStatement = generateExportNameStatement();
 
+    let mixinStatement = generateMixinStatement();
+
     let serviceStatement = generateServiceStatements(serviceFilePath)
 
     // 框架代码 引用路径
@@ -148,6 +150,8 @@ function generatorEntryFiles(path, userConfig, entrys) {
       vue_entry: {content: vueEntryPath, relativePath: false, required: true},
       plugins: {content: pluginStatement, statement: true},
       exportName: {content: exportNameStatement, statement: true},
+
+      mixin: {content: mixinStatement, statement: true},
 
       serviceStatement:{content: serviceStatement, statement: true},
 
@@ -181,7 +185,7 @@ function generatorEntryFiles(path, userConfig, entrys) {
   function generateIndexHtmlPath(appRelativePath) {
     var defaultPath = path.resolve(srcFolder) + `${appRelativePath}/index.html`
 
-    if(fs.existsSync(path) || !singleApp){
+    if(fs.existsSync(defaultPath) || !singleApp){
       return defaultPath
     }else{
       return __dirname + '/index.html'
@@ -425,7 +429,13 @@ window.Vuex  = require('vuex/dist/vuex')`
   function generateExportNameStatement(){
     var exportName = userConfig.exportName || "$entry";
 
-    return `window._$vueEntry_exportName = "${exportName}";`
+    return `window._$vueEntry_exportName = "${exportName}"; `
+  }
+
+  function generateMixinStatement() {
+    var mixinPath = __dirname + '/mixin.js'
+
+    return `require('${mixinPath}')`
   }
 
   function generateServiceStatements(filePath) {
